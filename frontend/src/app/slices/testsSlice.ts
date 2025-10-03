@@ -8,12 +8,32 @@ interface Test {
   status?: string; // Added status for filtering
 }
 
+interface TestDetails extends Test {
+  // Add any other fields specific to test details
+  description?: string;
+  last_run_timestamp?: string;
+  flakiness_score?: number;
+}
+
+interface TestLogs {
+  test_id: number;
+  logs: string[];
+}
+
+interface RootCauseAnalysis {
+  test_id: number;
+  root_causes: string[]; // Assuming root_causes is an array of strings
+}
+
 interface TestsState {
   tests: Test[];
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
   error: string | null;
   searchTerm: string;
   filters: Record<string, string>;
+  selectedTestDetails: TestDetails | null;
+  selectedTestLogs: TestLogs | null;
+  selectedRootCauseAnalysis: RootCauseAnalysis | null;
 }
 
 const initialState: TestsState = {
@@ -22,6 +42,9 @@ const initialState: TestsState = {
   error: null,
   searchTerm: '',
   filters: {},
+  selectedTestDetails: null,
+  selectedTestLogs: null,
+  selectedRootCauseAnalysis: null,
 };
 
 export const fetchTests = createAsyncThunk('tests/fetchTests', async () => {
@@ -42,6 +65,30 @@ export const fetchFilteredTests = createAsyncThunk(
       }
     }
     const response = await api.get(`/tests?${params.toString()}`);
+    return response.data;
+  }
+);
+
+export const fetchTestDetails = createAsyncThunk(
+  'tests/fetchTestDetails',
+  async (testId: number) => {
+    const response = await api.get(`/tests/${testId}`);
+    return response.data;
+  }
+);
+
+export const fetchTestLogs = createAsyncThunk(
+  'tests/fetchTestLogs',
+  async (testId: number) => {
+    const response = await api.get(`/tests/${testId}/logs`);
+    return response.data;
+  }
+);
+
+export const fetchRootCauseAnalysis = createAsyncThunk(
+  'tests/fetchRootCauseAnalysis',
+  async (testId: number) => {
+    const response = await api.get(`/analysis/root_cause/${testId}`);
     return response.data;
   }
 );
@@ -111,6 +158,42 @@ const testsSlice = createSlice({
       .addCase(fetchFilteredTests.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message || 'Failed to fetch filtered tests';
+      })
+      .addCase(fetchTestDetails.pending, (state) => {
+        state.status = 'loading';
+        state.selectedTestDetails = null;
+      })
+      .addCase(fetchTestDetails.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.selectedTestDetails = action.payload;
+      })
+      .addCase(fetchTestDetails.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message || 'Failed to fetch test details';
+      })
+      .addCase(fetchTestLogs.pending, (state) => {
+        state.status = 'loading';
+        state.selectedTestLogs = null;
+      })
+      .addCase(fetchTestLogs.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.selectedTestLogs = action.payload;
+      })
+      .addCase(fetchTestLogs.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message || 'Failed to fetch test logs';
+      })
+      .addCase(fetchRootCauseAnalysis.pending, (state) => {
+        state.status = 'loading';
+        state.selectedRootCauseAnalysis = null;
+      })
+      .addCase(fetchRootCauseAnalysis.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.selectedRootCauseAnalysis = action.payload;
+      })
+      .addCase(fetchRootCauseAnalysis.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message || 'Failed to fetch root cause analysis';
       })
       .addCase(createTest.fulfilled, (state, action) => {
         // This is handled by WebSocket now, but keeping for direct API calls if any

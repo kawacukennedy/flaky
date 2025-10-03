@@ -1,8 +1,9 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import DashboardPage from './pages/Dashboard';
+import DashboardPage from './pages/DashboardPage';
 import FlakesPage from './pages/FlakesPage';
 import ProfilePage from './pages/ProfilePage';
 import SettingsPage from './pages/SettingsPage';
+import TestDetailPage from './pages/TestDetailPage'; // Import TestDetailPage
 import { ThemeProvider } from './ThemeInitializer';
 import GlobalToast from './components/layout/GlobalToast';
 import LeftNav from './components/layout/LeftNav';
@@ -23,6 +24,7 @@ function App() {
                 <Route path="/flakes" element={<FlakesPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
                 <Route path="/settings" element={<SettingsPage />} />
+                <Route path="/tests/:test_id" element={<TestDetailPage />} /> {/* Add new route */}
                 {/* Add more routes as needed */}
               </Routes>
             </main>

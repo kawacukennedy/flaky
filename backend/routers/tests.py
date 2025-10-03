@@ -29,9 +29,7 @@ def read_tests(
         query = query.filter(models.Test.name.ilike(f"%{search}%"))
 
     if status:
-        # Assuming Test model has a 'status' field or can be joined with FlakyOccurrence
-        # For now, let's assume a direct status field on Test for simplicity
-        query = query.filter(models.Test.status == status) # This field needs to be added to models.py
+        query = query.filter(models.Test.status == status)
 
     if project:
         query = query.join(models.Project).filter(models.Project.name.ilike(f"%{project}%"))
@@ -52,6 +50,20 @@ def read_test(test_id: int, db: Session = Depends(get_db)):
     if test is None:
         raise HTTPException(status_code=404, detail="Test not found")
     return test
+
+@router.get("/{test_id}/logs")
+def get_test_logs(test_id: int, db: Session = Depends(get_db)):
+    # In a real scenario, logs would be stored in a dedicated logging system or as part of FlakyOccurrence
+    # For now, we'll return dummy logs associated with flaky occurrences
+    occurrences = db.query(models.FlakyOccurrence).filter(models.FlakyOccurrence.test_id == test_id).all()
+    logs = []
+    for occ in occurrences:
+        logs.append(f"[{occ.timestamp.isoformat()}] Status: {'PASS' if occ.status else 'FAIL'} - Stack Trace: {occ.stack_trace or 'N/A'}")
+    
+    if not logs:
+        raise HTTPException(status_code=404, detail="No logs found for this test")
+    
+    return {"test_id": test_id, "logs": logs}
 
 @router.put("/{test_id}", response_model=schemas.TestResponse)
 async def update_test(test_id: int, test_update: schemas.TestCreate, db: Session = Depends(get_db)):
