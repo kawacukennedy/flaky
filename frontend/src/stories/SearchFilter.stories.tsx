@@ -7,9 +7,20 @@ const meta = {
   component: SearchFilter,
   parameters: {
     layout: 'centered',
+    a11y: { // Enable a11y checks for this component
+      element: '#storybook-root',
+      config: {},
+      options: {},
+      manual: true,
+    },
   },
   tags: ['autodocs'],
-  args: { onChange: fn() },
+  argTypes: {
+    label: { control: 'text' },
+    options: { control: 'object' },
+    defaultValue: { control: 'text' },
+    onChange: { action: 'changed' },
+  },
 } satisfies Meta<typeof SearchFilter>;
 
 export default meta;
@@ -20,7 +31,7 @@ export const SourceFilter: Story = {
     label: 'Source',
     options: ['All', 'CI Logs', 'GitHub', 'Docs'],
     defaultValue: 'All',
-    currentValue: 'All',
+    onChange: fn(),
   },
 };
 
@@ -29,24 +40,15 @@ export const DateFilter: Story = {
     label: 'Date',
     options: ['24h', '7d', '30d', 'All Time'],
     defaultValue: '7d',
-    currentValue: '7d',
+    onChange: fn(),
   },
 };
 
 export const SortFilter: Story = {
   args: {
     label: 'Sort',
-    options: ['Relevance', 'Most Recent', 'Least Recent'],
+    options: ['Relevance', 'Most Recent'],
     defaultValue: 'Relevance',
-    currentValue: 'Relevance',
-  },
-};
-
-export const WithSelectedValue: Story = {
-  args: {
-    label: 'Source',
-    options: ['All', 'CI Logs', 'GitHub', 'Docs'],
-    defaultValue: 'All',
-    currentValue: 'GitHub',
+    onChange: fn(),
   },
 };

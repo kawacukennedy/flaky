@@ -6,26 +6,38 @@ const meta = {
   component: TopSolutions,
   parameters: {
     layout: 'centered',
+    a11y: { // Enable a11y checks for this component
+      element: '#storybook-root',
+      config: {},
+      options: {},
+      manual: true,
+    },
   },
   tags: ['autodocs'],
+  argTypes: {
+    solutions: {
+      control: 'object',
+      description: 'Array of top solutions',
+    },
+  },
 } satisfies Meta<typeof TopSolutions>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const EmptyState: Story = {
+export const Default: Story = {
   args: {
-    solutions: [],
+    solutions: [
+      { id: '1', title: 'Fixing Null Pointer Exception', snippet: 'Add null checks before accessing object properties.', votes: 15 },
+      { id: '2', title: 'Optimizing Database Queries', snippet: 'Use indexing and limit clauses for large datasets.', votes: 12 },
+      { id: '3', title: 'Handling Async Operations in Tests', snippet: 'Utilize async/await with proper test utilities.', votes: 8 },
+      { id: '4', title: 'Resolving CORS Issues', snippet: 'Configure backend to allow cross-origin requests from frontend.', votes: 7 },
+    ],
   },
 };
 
-export const WithSolutions: Story = {
+export const EmptyState: Story = {
   args: {
-    solutions: [
-      { id: '1', title: 'Fixing Flaky Login Test', snippet: 'This solution provides a robust way to handle intermittent login failures by implementing a retry mechanism with exponential backoff.', votes: 45 },
-      { id: '2', title: 'Optimizing Database Queries for Performance', snippet: 'Learn how to refactor slow SQL queries and add proper indexing to significantly boost your application\'s speed and reduce flakiness.', votes: 32 },
-      { id: '3', title: 'Handling Asynchronous Operations in UI Tests', snippet: 'A comprehensive guide to writing stable UI tests that interact with asynchronous components, preventing common race conditions and timeouts.', votes: 28 },
-      { id: '4', title: 'Environment Setup Best Practices for CI/CD', snippet: 'Ensure consistent test environments across all CI/CD pipelines to eliminate environment-specific flaky test results.', votes: 19 },
-    ],
+    solutions: [],
   },
 };

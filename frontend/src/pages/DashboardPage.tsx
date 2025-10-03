@@ -13,10 +13,11 @@ const DashboardPage: React.FC = () => {
           <h1 className="text-4xl font-bold mb-2">Track & Hunt Flaky Tests</h1>
           <p className="text-xl mb-6">Centralized debugging insights for developers.</p>
           <div className="flex justify-center space-x-4">
-            <Link to="/search" className="bg-white text-primary px-6 py-3 rounded-md shadow-md hover:scale-102 hover:shadow-lg transition-all duration-200">
-              Start Hunting
+            <Link to="/search" className="w-40 h-12 flex items-center justify-center bg-primary text-white rounded-md shadow-sm hover:scale-[1.02] hover:shadow-md hover:bg-primary_hover transition-all duration-normal ease-standard group relative overflow-hidden">
+              <span className="relative z-10">Start Hunting</span>
+              <span className="absolute inset-0 rounded-md bg-white opacity-0 group-active:opacity-20 transition-opacity duration-fast ease-soft"></span>
             </Link>
-            <Link to="/flakes" className="bg-transparent border border-white text-white px-6 py-3 rounded-md hover:bg-white hover:text-primary transition-colors duration-200">
+            <Link to="/flakes" className="w-40 h-12 flex items-center justify-center bg-secondary text-white rounded-md shadow-sm hover:scale-[1.02] hover:shadow-md transition-all duration-normal ease-standard">
               View Flakes
             </Link>
           </div>

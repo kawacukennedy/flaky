@@ -6,48 +6,67 @@ const meta = {
   component: SearchResults,
   parameters: {
     layout: 'centered',
+    a11y: { // Enable a11y checks for this component
+      element: '#storybook-root',
+      config: {},
+      options: {},
+      manual: true,
+    },
   },
   tags: ['autodocs'],
+  argTypes: {
+    results: { control: 'object' },
+    isLoading: { control: 'boolean' },
+  },
 } satisfies Meta<typeof SearchResults>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const mockResults = [
-  { id: '1', title: 'Flaky Test in Login Module', snippet: 'Found an intermittent failure in the user login flow, often related to session management and race conditions during concurrent logins.', source: 'CI Logs', date: '2023-10-26' },
-  { id: '2', title: 'High Flakiness in Payment Gateway Integration', snippet: 'Analysis shows frequent failures in the payment processing module, particularly with third-party API calls and network latency.', source: 'GitHub', date: '2023-10-25' },
-  { id: '3', title: 'Documentation for FlakeHunter Search Feature', snippet: 'This document outlines how to effectively use the search functionality within FlakeHunter to quickly locate relevant flaky test data and solutions.', source: 'Docs', date: '2023-10-20' },
-  { id: '4', title: 'Database Connection Pool Exhaustion', snippet: 'Intermittent test failures traced back to database connection pool exhaustion under heavy load conditions. Solution involves tuning connection parameters.', source: 'CI Logs', date: '2023-10-18' },
+const sampleResults = [
+  {
+    id: '1',
+    title: 'Flaky Test: User Login Failure',
+    description: 'Intermittent login failures observed in CI builds, possibly due to race conditions.',
+    link: '/tests/1',
+  },
+  {
+    id: '2',
+    title: 'Log Analysis: Database Connection Errors',
+    description: 'Frequent database connection timeouts in production logs.',
+    link: '/logs/db-errors',
+  },
+  {
+    id: '3',
+    title: 'GitHub Issue: Frontend UI Glitch',
+    description: 'UI elements occasionally misalign on mobile devices.',
+    link: '/issues/gh-123',
+  },
+  {
+    id: '4',
+    title: 'Documentation: How to debug flaky tests',
+    description: 'A guide on common patterns and tools for debugging flaky tests.',
+    link: '/docs/debugging',
+  },
 ];
 
-export const InitialState: Story = {
+export const Default: Story = {
   args: {
-    results: [],
-    loading: false,
-    searchTerm: '',
+    results: sampleResults,
+    isLoading: false,
   },
 };
 
-export const LoadingState: Story = {
+export const Empty: Story = {
   args: {
     results: [],
-    loading: true,
-    searchTerm: 'loading query',
+    isLoading: false,
   },
 };
 
-export const NoResults: Story = {
+export const Loading: Story = {
   args: {
     results: [],
-    loading: false,
-    searchTerm: 'nonexistent query',
-  },
-};
-
-export const WithResults: Story = {
-  args: {
-    results: mockResults,
-    loading: false,
-    searchTerm: 'flaky',
+    isLoading: true,
   },
 };

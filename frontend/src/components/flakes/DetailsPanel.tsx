@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import clsx from 'clsx';
-import { Transition } from '@headlessui/react';
 
 interface DetailsPanelProps {
   summaryContent: React.ReactNode;
@@ -8,60 +6,49 @@ interface DetailsPanelProps {
   linkedIssuesContent: React.ReactNode;
 }
 
-const DetailsPanel: React.FC<DetailsPanelProps> = ({ summaryContent, rootCausesContent, linkedIssuesContent }) => {
-  const [activeTab, setActiveTab] = useState<'summary' | 'rootCauses' | 'linkedIssues'>('summary');
+const DetailsPanel: React.FC<DetailsPanelProps> = ({
+  summaryContent,
+  rootCausesContent,
+  linkedIssuesContent,
+}) => {
+  const [activeTab, setActiveTab] = useState('Summary');
 
   const tabs = [
-    { id: 'summary', label: 'Summary', content: summaryContent },
-    { id: 'rootCauses', label: 'Root Causes', content: rootCausesContent },
-    { id: 'linkedIssues', label: 'Linked Issues', content: linkedIssuesContent },
+    { name: 'Summary', content: summaryContent },
+    { name: 'Root Causes', content: rootCausesContent },
+    { name: 'Linked Issues', content: linkedIssuesContent },
   ];
 
   return (
-    <div className="flex flex-col h-full bg-surface_light dark:bg-surface_dark rounded-lg shadow-sm">
-      <div className="border-b border-border p-4">
-        <nav className="flex space-x-4" aria-label="Details tabs">
+    <div className="bg-surface_light dark:bg-surface_dark rounded-lg p-6 shadow-md">
+      <div className="border-b border-border mb-4">
+        <nav className="-mb-px flex space-x-8" aria-label="Tabs">
           {tabs.map((tab) => (
             <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)} // Type assertion for simplicity
-              className={clsx(
-                'px-3 py-2 font-medium text-sm rounded-md',
-                activeTab === tab.id
-                  ? 'bg-primary text-white'
-                  : 'text-text_light dark:text-text_dark hover:bg-bg_light dark:hover:bg-surface_dark'
-              )}
-              aria-controls={`panel-${tab.id}`}
-              aria-selected={activeTab === tab.id}
-              role="tab"
+              key={tab.name}
+              onClick={() => setActiveTab(tab.name)}
+              className={`whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm ${activeTab === tab.name
+                ? 'border-primary text-primary'
+                : 'border-transparent text-muted hover:text-text_light hover:border-gray-300 dark:hover:border-gray-700'
+                }`}
             >
-              {tab.label}
+              {tab.name}
             </button>
           ))}
         </nav>
       </div>
-      <div className="p-4 flex-1 overflow-y-auto">
+      <div className="relative overflow-hidden">
         {tabs.map((tab) => (
-          <Transition
-            key={tab.id}
-            show={activeTab === tab.id}
-            as={React.Fragment}
-            enter="transition ease-out duration-200"
-            enterFrom="opacity-0 translate-x-5"
-            enterTo="opacity-100 translate-x-0"
-            leave="transition ease-in duration-150"
-            leaveFrom="opacity-100 translate-x-0"
-            leaveTo="opacity-0 translate-x-5"
+          <div
+            key={tab.name}
+            className={`transition-all duration-200 ease-soft transform
+              ${activeTab === tab.name
+                ? 'opacity-100 translate-x-0'
+                : 'opacity-0 absolute top-0 left-0 w-full pointer-events-none translate-x-4'
+              }`}
           >
-            <div
-              id={`panel-${tab.id}`}
-              role="tabpanel"
-              aria-labelledby={`tab-${tab.id}`}
-              className={clsx(activeTab !== tab.id && 'hidden')} // Hide content when not active
-            >
-              {tab.content}
-            </div>
-          </Transition>
+            {activeTab === tab.name && tab.content}
+          </div>
         ))}
       </div>
     </div>

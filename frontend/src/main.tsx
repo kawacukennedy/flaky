@@ -4,7 +4,8 @@ import { Provider } from 'react-redux';
 import { store } from './app/store';
 import './index.css';
 import App from './App.tsx';
-import ThemeInitializer from './ThemeInitializer.tsx';
+import { ThemeProvider } from './ThemeInitializer.tsx';
+import GlobalToast from './components/layout/GlobalToast.tsx';
 import {
   createBrowserRouter,
   RouterProvider,
@@ -59,10 +60,10 @@ const router = createBrowserRouter([
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Provider store={store}>
-      <ThemeInitializer>
+      <ThemeProvider>
         <RouterProvider router={router} />
         <GlobalToast />
-      </ThemeInitializer>
+      </ThemeProvider>
     </Provider>
   </StrictMode>,
 );

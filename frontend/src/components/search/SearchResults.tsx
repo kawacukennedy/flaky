@@ -1,72 +1,89 @@
 import React from 'react';
 import { Frown } from 'lucide-react';
 
-interface SearchResultItemProps {
+interface SearchResultItem {
   id: string;
   title: string;
-  snippet: string;
-  source: string;
-  date: string;
+  description: string;
+  link: string;
 }
 
-const SearchResultItem: React.FC<SearchResultItemProps> = ({ title, snippet, source, date }) => {
+interface EmptyStateCardProps {
+  message: string;
+  ctaText?: string;
+  onCtaClick?: () => void;
+}
+
+const EmptyStateCard: React.FC<EmptyStateCardProps> = ({ message, ctaText, onCtaClick }) => {
   return (
-    <div className="bg-surface_light dark:bg-surface_dark rounded-md p-4 shadow-sm border border-border">
-      <h3 className="text-lg font-semibold text-primary mb-1">{title}</h3>
-      <p className="text-muted text-sm mb-2 line-clamp-2">{snippet}</p>
-      <div className="flex justify-between items-center text-xs text-gray-500 dark:text-gray-400">
-        <span>Source: <span className="font-medium">{source}</span></span>
-        <span>Date: <span className="font-medium">{date}</span></span>
-      </div>
+    <div className="flex flex-col items-center justify-center p-8 bg-surface_light dark:bg-surface_dark rounded-md shadow-sm text-muted">
+      <Frown className="h-16 w-16 mb-4" />
+      <p className="text-lg font-semibold mb-2">{message}</p>
+      {ctaText && onCtaClick && (
+        <button
+          onClick={onCtaClick}
+          className="mt-4 px-4 py-2 bg-primary text-white rounded-md hover:bg-primary_hover transition-colors duration-normal"
+        >
+          {ctaText}
+        </button>
+      )}
+    </div>
+  );
+};
+
+const SkeletonShimmer: React.FC = () => {
+  return (
+    <div className="animate-pulse space-y-4">
+      <div className="h-4 bg-muted rounded w-3/4"></div>
+      <div className="h-4 bg-muted rounded"></div>
+      <div className="h-4 bg-muted rounded w-5/6"></div>
     </div>
   );
 };
 
 interface SearchResultsProps {
-  results: SearchResultItemProps[];
-  loading: boolean;
-  searchTerm: string;
+  results: SearchResultItem[];
+  isLoading: boolean;
 }
 
-const SearchResults: React.FC<SearchResultsProps> = ({ results, loading, searchTerm }) => {
-  if (loading) {
+const SearchResults: React.FC<SearchResultsProps> = ({ results, isLoading }) => {
+  if (isLoading) {
     return (
-      <div className="space-y-4 mt-6">
-        {[...Array(3)].map((_, index) => (
-          <div key={index} data-testid="loading-skeleton" className="bg-surface_light dark:bg-surface_dark rounded-md p-4 shadow-sm border border-border animate-pulse">
-            <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-3/4 mb-2"></div>
-            <div className="h-3 bg-gray-300 dark:bg-gray-700 rounded w-full mb-2"></div>
-            <div className="h-3 bg-gray-300 dark:bg-gray-700 rounded w-1/2"></div>
-          </div>
-        ))}
+      <div className="space-y-4">
+        <div className="bg-surface_light dark:bg-surface_dark p-4 rounded-md shadow-sm">
+          <SkeletonShimmer />
+        </div>
+        <div className="bg-surface_light dark:bg-surface_dark p-4 rounded-md shadow-sm">
+          <SkeletonShimmer />
+        </div>
+        <div className="bg-surface_light dark:bg-surface_dark p-4 rounded-md shadow-sm">
+          <SkeletonShimmer />
+        </div>
       </div>
     );
   }
 
-  if (results.length === 0 && searchTerm) {
+  if (results.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-12 text-muted mt-6">
-        <Frown className="h-16 w-16 mb-4" />
-        <p className="text-xl font-semibold mb-2">No results found</p>
-        <p className="text-center">Try adjusting your search term or filters.</p>
-      </div>
-    );
-  }
-
-  if (results.length === 0 && !searchTerm) {
-    return (
-      <div className="flex flex-col items-center justify-center py-12 text-muted mt-6">
-        <Search className="h-16 w-16 mb-4" />
-        <p className="text-xl font-semibold mb-2">Start searching</p>
-        <p className="text-center">Enter a query to find flaky tests, logs, or errors.</p>
-      </div>
+      <EmptyStateCard
+        message="No results found for your search."
+        ctaText="Clear Filters"
+        onCtaClick={() => console.log('Clear filters action')}
+      />
     );
   }
 
   return (
-    <div className="space-y-4 mt-6">
-      {results.map((result) => (
-        <SearchResultItem key={result.id} {...result} />
+    <div className="space-y-4">
+      {results.map((item) => (
+        <a
+          key={item.id}
+          href={item.link}
+          className="block p-4 rounded-md shadow-sm bg-surface_light dark:bg-surface_dark hover:lift hover:shadow-md transition-all duration-normal"
+        >
+          <h3 className="text-lg font-semibold text-text_light dark:text-text_dark mb-1">{item.title}</h3>
+          <p className="text-muted text-sm">{item.description}</p>
+        </a>
       ))}
     </div>
   );

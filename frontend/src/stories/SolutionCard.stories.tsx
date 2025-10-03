@@ -1,11 +1,18 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import { fn } from '@storybook/test';
 import SolutionCard from '../components/solutions/SolutionCard';
 
-const meta: Meta<typeof SolutionCard> = {
+const meta = {
   title: 'Solutions/SolutionCard',
   component: SolutionCard,
   parameters: {
     layout: 'centered',
+    a11y: { // Enable a11y checks for this component
+      element: '#storybook-root',
+      config: {},
+      options: {},
+      manual: true,
+    },
   },
   tags: ['autodocs'],
   argTypes: {
@@ -14,42 +21,39 @@ const meta: Meta<typeof SolutionCard> = {
     source: { control: 'text' },
     tags: { control: 'object' },
     votes: { control: 'number' },
-    fullContent: { control: 'text' },
+    onClick: { action: 'clicked' },
   },
-};
+} satisfies Meta<typeof SolutionCard>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    title: 'Fixing Intermittent Test Failures',
-    snippet: 'A common cause of flaky tests is reliance on external services or timing issues. Implement proper mocking and use deterministic delays.',
-    source: 'Internal Wiki',
-    tags: ['flaky', 'testing', 'best-practices'],
-    votes: 42,
-    fullContent: 'Full detailed guide on fixing intermittent test failures, including code examples and common pitfalls.',
+    title: 'Fixing Null Pointer Exception',
+    snippet: '```java\npublic void safeMethod(Object obj) {\n  if (obj != null) {\n    obj.doSomething();\n  }\n}\n```\nAdd null checks before accessing object properties to prevent NullPointerExceptions. This ensures your application handles unexpected null values gracefully, improving stability and reducing crashes. Consider using Optional in Java 8+ for more idiomatic null handling.',
+    source: 'https://stackoverflow.com/questions/example',
+    tags: ['Java', 'Error Handling', 'Best Practice'],
+    votes: 15,
   },
 };
 
-export const WithLongSnippet: Story = {
+export const LongSnippet: Story = {
   args: {
-    title: 'Advanced CI/CD Pipeline Optimization for Flaky Tests',
-    snippet: 'This solution delves into advanced techniques for optimizing your CI/CD pipeline to automatically detect, quarantine, and analyze flaky tests, significantly reducing developer overhead and improving release confidence. It covers dynamic test selection, intelligent re-runs, and integration with AI-powered root cause analysis tools.',
-    source: 'Engineering Blog',
-    tags: ['ci/cd', 'automation', 'devops', 'advanced'],
-    votes: 128,
-    fullContent: 'Detailed article on advanced CI/CD pipeline optimization...', 
+    title: 'Optimizing Database Queries for Performance',
+    snippet: '```sql\nSELECT * FROM users WHERE created_at < NOW() - INTERVAL \'1 year\' ORDER BY created_at DESC LIMIT 100;\n```\nOptimize database queries by adding appropriate indexes to frequently queried columns, using LIMIT for pagination, and avoiding SELECT * in production code. This reduces the load on your database and speeds up data retrieval, leading to a more responsive application. Also, consider eager loading for ORMs.',
+    source: 'https://docs.example.com/db-optimization',
+    tags: ['SQL', 'Performance', 'Database', 'Optimization'],
+    votes: 30,
   },
 };
 
 export const ZeroVotes: Story = {
   args: {
-    title: 'New Solution Idea',
-    snippet: 'This is a brand new idea for a solution that hasn\'t received any votes yet.',
-    source: 'Community Submission',
-    tags: ['new', 'idea'],
+    title: 'Understanding Event Loop in JavaScript',
+    snippet: 'The JavaScript event loop is a crucial part of its concurrency model. It handles asynchronous callbacks by pushing them to a queue and processing them when the call stack is empty. Understanding this mechanism is key to writing non-blocking code and avoiding common performance pitfalls in Node.js and browser environments.',
+    source: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/EventLoop',
+    tags: ['JavaScript', 'Concurrency', 'Event Loop'],
     votes: 0,
-    fullContent: 'Details of the new solution idea.',
   },
 };

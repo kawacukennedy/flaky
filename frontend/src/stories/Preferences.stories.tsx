@@ -1,12 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { fn } from '@storybook/test';
-import TopNav from '../components/layout/TopNav';
+import Preferences from '../components/profile/Preferences';
 
 const meta = {
-  title: 'Layout/TopNav',
-  component: TopNav,
+  title: 'Profile/Preferences',
+  component: Preferences,
   parameters: {
-    layout: 'fullscreen',
+    layout: 'centered',
     a11y: { // Enable a11y checks for this component
       element: '#storybook-root',
       config: {},
@@ -14,8 +13,8 @@ const meta = {
       manual: true,
     },
   },
-  args: { onSearch: fn() },
-} satisfies Meta<typeof TopNav>;
+  tags: ['autodocs'],
+} satisfies Meta<typeof Preferences>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;

@@ -1,63 +1,91 @@
 import React, { useState } from 'react';
-import { Copy, ChevronDown, ChevronUp } from 'lucide-react';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism'; // Example style
+import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
+import { Copy, ChevronDown, ChevronRight } from 'lucide-react';
 
 interface LogsViewerProps {
-  logs: string;
-  language?: string; // e.g., 'javascript', 'python', 'bash'
+  logContent: string;
+  language?: string;
 }
 
-const LogsViewer: React.FC<LogsViewerProps> = ({ logs, language = 'bash' }) => {
-  const [copied, setCopied] = useState(false);
-  const [expandedStacktrace, setExpandedStacktrace] = useState(false);
+const LogsViewer: React.FC<LogsViewerProps> = ({ logContent, language = 'plaintext' }) => {
+  const [expandedStacktraces, setExpandedStacktraces] = useState<Set<number>>(new Set());
+
+  const toggleStacktrace = (lineNumber: number) => {
+    setExpandedStacktraces((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(lineNumber)) {
+        newSet.delete(lineNumber);
+      } else {
+        newSet.add(lineNumber);
+      }
+      return newSet;
+    });
+  };
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(logs);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    navigator.clipboard.writeText(logContent);
+    // Optionally, add a toast notification here
   };
 
-  const toggleStacktrace = () => {
-    setExpandedStacktrace(!expandedStacktrace);
-  };
+  const renderLine = (node: any, lineNumber: number) => {
+    const line = node.children[0]?.value || '';
+    const isStacktraceStart = line.includes('at ') || line.includes('Caused by:'); // Simple heuristic
+    const isExpanded = expandedStacktraces.has(lineNumber);
 
-  // Simple logic to find a stack trace for demonstration
-  const stacktraceRegex = /(at |Caused by: |Traceback \(most recent call last\):[\s\S]*?Error:)/;
-  const hasStacktrace = stacktraceRegex.test(logs);
-  const [beforeStacktrace, stacktraceContent] = hasStacktrace ? logs.split(stacktraceRegex, 2) : [logs, ''];
+    if (isStacktraceStart) {
+      return (
+        <div key={lineNumber} className="flex items-start">
+          <button
+            onClick={() => toggleStacktrace(lineNumber)}
+            className="mr-2 text-muted hover:text-text_light dark:hover:text-text_dark"
+            aria-expanded={isExpanded}
+            aria-controls={`stacktrace-line-${lineNumber}`}
+          >
+            {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+          </button>
+          <span id={`stacktrace-line-${lineNumber}`} className={isExpanded ? '' : 'truncate'}>
+            {line}
+          </span>
+        </div>
+      );
+    }
+    return <span key={lineNumber}>{line}</span>;
+  };
 
   return (
-    <div className="relative bg-bg_dark rounded-md p-4 font-mono text-sm overflow-auto h-full">
+    <div className="bg-surface_dark rounded-lg p-4 shadow-md font-mono text-sm relative">
       <button
         onClick={handleCopy}
-        className="absolute top-2 right-2 p-1 rounded-md bg-surface_dark text-text_dark hover:bg-gray-700 transition-colors duration-200"
-        aria-label="Copy logs to clipboard"
+        className="absolute top-2 right-2 p-1 rounded-md bg-bg_light dark:bg-bg_dark text-muted hover:text-primary transition-colors duration-fast"
+        aria-label="Copy log content"
       >
-        <Copy className="h-4 w-4" />
-        {copied && <span className="absolute -top-6 right-0 text-xs bg-primary text-white px-2 py-1 rounded-md">Copied!</span>}
+        <Copy size={16} />
       </button>
-
-      <SyntaxHighlighter language={language} style={vscDarkPlus} showLineNumbers={true} customStyle={{ background: 'transparent' }}>
-        {beforeStacktrace}
+      <SyntaxHighlighter
+        language={language}
+        style={docco}
+        showLineNumbers={true}
+        wrapLines={true}
+        lineProps={(lineNumber) => ({
+          style: { display: 'block', cursor: 'pointer' },
+          onClick: () => toggleStacktrace(lineNumber),
+        })}
+        renderer={({ rows }) => (
+          <code className="hljs">
+            {rows.map((row, i) => (
+              <div key={i} className="flex">
+                <span className="line-number pr-4 text-gray-500 select-none">{i + 1}</span>
+                <span className="line-content flex-1">
+                  {renderLine(row, i + 1)}
+                </span>
+              </div>
+            ))}
+          </code>
+        )}
+      >
+        {logContent}
       </SyntaxHighlighter>
-
-      {hasStacktrace && ( // Only render if a stacktrace is found
-        <div className="mt-4">
-          <button
-            onClick={toggleStacktrace}
-            className="flex items-center text-primary hover:underline focus:outline-none"
-          >
-            {expandedStacktrace ? <ChevronUp className="h-4 w-4 mr-1" /> : <ChevronDown className="h-4 w-4 mr-1" />}
-            {expandedStacktrace ? 'Collapse Stacktrace' : 'Expand Stacktrace'}
-          </button>
-          {expandedStacktrace && (
-            <SyntaxHighlighter language={language} style={vscDarkPlus} showLineNumbers={true} startingLineNumber={beforeStacktrace.split('\n').length + 1} customStyle={{ background: 'transparent' }}>
-              {stacktraceContent}
-            </SyntaxHighlighter>
-          )}
-        </div>
-      )}
     </div>
   );
 };

@@ -12,13 +12,13 @@ body {
 }
 
 @keyframes gradient-shift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  0% { background-position: 0% 0%; }
+  50% { background-position: 100% 100%; }
+  100% { background-position: 0% 0%; }
 }
 
 .animate-gradient-shift {
-  background-size: 200% 200%;
+  background-size: 400% 400%;
   animation: gradient-shift 10s ease infinite;
 }
 
@@ -48,6 +48,15 @@ body {
   0%, 100% { transform: translateX(0); }
   20%, 60% { transform: translateX(-2px); }
   40%, 80% { transform: translateX(2px); }
+}
+
+@keyframes glow {
+  0% { box-shadow: 0 0 0px 0px theme('colors.primary'); }
+  100% { box-shadow: 0 0 0px 3px theme('colors.primary'); }
+}
+
+.animate-glow {
+  animation: glow 0.2s ease-out forwards;
 }
 
 @keyframes fade-slide-in {
