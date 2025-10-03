@@ -1,73 +1,42 @@
-import {
-  createColumnHelper,
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-} from '@tanstack/react-table';
+// Purpose: Paginated test table with sorting
 
-interface FlakyTest {
-  test_id: string;
-  flakiness_score: number;
-  root_cause: string;
+import React from 'react';
+
+interface TableColumn {
+  key: string;
+  header: string;
+  render?: (item: any) => React.ReactNode;
 }
 
 interface TableComponentProps {
-  data: FlakyTest[];
+  data: any[];
+  columns: TableColumn[];
+  onRowClick?: (item: any) => void;
 }
 
-const columnHelper = createColumnHelper<FlakyTest>();
-
-const columns = [
-  columnHelper.accessor('test_id', {
-    cell: info => info.getValue(),
-    header: () => <span>Test ID</span>,
-  }),
-  columnHelper.accessor('flakiness_score', {
-    cell: info => <span>{(info.getValue() * 100).toFixed(1)}%</span>,
-    header: () => <span>Flakiness Score</span>,
-  }),
-  columnHelper.accessor('root_cause', {
-    cell: info => info.getValue(),
-    header: () => <span>Root Cause</span>,
-  }),
-];
-
-const TableComponent = ({ data }: TableComponentProps) => {
-  const table = useReactTable({
-    data,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-  });
-
+const TableComponent: React.FC<TableComponentProps> = ({ data, columns, onRowClick }) => {
   return (
-    <div className="overflow-x-auto">
-      <table className="min-w-full divide-y divide-border dark:divide-gray-700">
-        <thead className="bg-gray-50 dark:bg-surface_dark">
-          {table.getHeaderGroups().map(headerGroup => (
-            <tr key={headerGroup.id}>
-              {headerGroup.headers.map(header => (
-                <th
-                  key={header.id}
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-muted dark:text-gray-400 uppercase tracking-wider"
-                >
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
-                </th>
-              ))}
-            </tr>
-          ))}
+    <div className="overflow-x-auto relative shadow-md sm:rounded-lg">
+      <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+        <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+          <tr>
+            {columns.map((column) => (
+              <th key={column.key} scope="col" className="py-3 px-6">
+                {column.header}
+              </th>
+            ))}
+          </tr>
         </thead>
-        <tbody className="bg-surface_light dark:bg-surface_dark divide-y divide-border dark:divide-gray-700">
-          {table.getRowModel().rows.map(row => (
-            <tr key={row.id}>
-              {row.getVisibleCells().map(cell => (
-                <td key={cell.id} className="px-6 py-4 whitespace-nowrap text-sm text-text_light dark:text-text_dark">
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+        <tbody>
+          {data.map((item, index) => (
+            <tr
+              key={index}
+              className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+              onClick={() => onRowClick && onRowClick(item)}
+            >
+              {columns.map((column) => (
+                <td key={column.key} className="py-4 px-6">
+                  {column.render ? column.render(item) : item[column.key]}
                 </td>
               ))}
             </tr>

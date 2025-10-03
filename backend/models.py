@@ -1,27 +1,34 @@
-from typing import List, Optional
-from sqlmodel import Field, SQLModel, Relationship
-from uuid import UUID, uuid4
-import datetime
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime
+from sqlalchemy.orm import relationship
+from .database import Base
 
-class Test(SQLModel, table=True):
-    id: UUID = Field(default_factory=uuid4, primary_key=True)
-    test_id_str: str = Field(unique=True, index=True) # The string ID like 'test_login'
-    framework: str = Field(max_length=20)
-    flakiness_score: float = Field(default=0.0, ge=0, le=1)
-    root_cause: Optional[str] = Field(default=None, max_length=50)
-    suggested_fix: Optional[str] = Field(default=None)
-    runs: List["Run"] = Relationship(back_populates="test")
+class Project(Base):
+    __tablename__ = 'projects'
+    id = Column(Integer, primary_key=True)
+    name = Column(String, unique=True, index=True)
+    tests = relationship('Test', back_populates='project')
 
-class Run(SQLModel, table=True):
-    id: UUID = Field(default_factory=uuid4, primary_key=True)
-    test_id: UUID = Field(foreign_key="test.id")
-    status: str = Field(max_length=10)
-    duration_ms: int
-    timestamp: datetime.datetime
-    stacktrace: Optional[str] = Field(default=None)
-    stdout: Optional[str] = Field(default=None)
-    stderr: Optional[str] = Field(default=None)
-    seed: Optional[int] = Field(default=None)
-    order_position: Optional[int] = Field(default=None)
-    test: "Test" = Relationship(back_populates="runs")
+class Test(Base):
+    __tablename__ = 'tests'
+    id = Column(Integer, primary_key=True)
+    name = Column(String, index=True)
+    project_id = Column(Integer, ForeignKey('projects.id'))
+    flaky_occurrences = relationship('FlakyOccurrence', back_populates='test')
+    project = relationship('Project', back_populates='tests')
 
+class FlakyOccurrence(Base):
+    __tablename__ = 'flake_occurrences'
+    id = Column(Integer, primary_key=True)
+    test_id = Column(Integer, ForeignKey('tests.id'))
+    timestamp = Column(DateTime)
+    status = Column(Boolean)
+    stack_trace = Column(String, nullable=True)
+    test = relationship('Test', back_populates='flaky_occurrences')
+
+class User(Base):
+    __tablename__ = 'users'
+    id = Column(Integer, primary_key=True)
+    username = Column(String, unique=True)
+    email = Column(String, unique=True)
+    password_hash = Column(String)
+    is_admin = Column(Boolean, default=False)

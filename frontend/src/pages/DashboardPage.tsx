@@ -1,45 +1,79 @@
+// Purpose: Charts, tables, analytics overview
+
 import React from 'react';
-import { Link } from 'react-router-dom';
-import RecentFlakes from '../components/dashboard/RecentFlakes';
-import TopSolutions from '../components/dashboard/TopSolutions';
+import LineChartComponent from '../components/LineChartComponent';
+import PieChartComponent from '../components/PieChartComponent';
+import TableComponent from '../components/TableComponent';
 
 const DashboardPage: React.FC = () => {
+  // Dummy data for charts and table
+  const lineChartData = {
+    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+    datasets: [
+      {
+        label: 'Flaky Tests',
+        data: [10, 15, 8, 12, 20, 18],
+        borderColor: 'rgb(255, 99, 132)',
+        backgroundColor: 'rgba(255, 99, 132, 0.5)',
+      },
+    ],
+  };
+
+  const pieChartData = {
+    labels: ['Timing', 'Environment', 'Order Dependency', 'Shared State'],
+    datasets: [
+      {
+        label: 'Flake Causes',
+        data: [300, 50, 100, 75],
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.8)',
+          'rgba(54, 162, 235, 0.8)',
+          'rgba(255, 206, 86, 0.8)',
+          'rgba(75, 192, 192, 0.8)',
+        ],
+        borderColor: [
+          'rgba(255, 99, 132, 1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)',
+          'rgba(75, 192, 192, 1)',
+        ],
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  const tableData = [
+    { id: 1, name: 'test_login_failure', project: 'AuthService', status: 'Flaky', last_seen: '2023-10-26' },
+    { id: 2, name: 'test_data_race', project: 'UserService', status: 'Flaky', last_seen: '2023-10-25' },
+    { id: 3, name: 'test_api_timeout', project: 'PaymentService', status: 'Flaky', last_seen: '2023-10-24' },
+  ];
+
+  const tableColumns = [
+    { key: 'id', header: 'ID' },
+    { key: 'name', header: 'Test Name' },
+    { key: 'project', header: 'Project' },
+    { key: 'status', header: 'Status' },
+    { key: 'last_seen', header: 'Last Seen' },
+  ];
+
   return (
-    <div className="p-6">
-      {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-primary to-blue-400 rounded-lg p-10 mb-8 overflow-hidden animate-gradient-shift">
-        <div className="particles"></div> {/* Particle effect */}
-        <div className="relative z-10 text-white text-center">
-          <h1 className="text-4xl font-bold mb-2">Track & Hunt Flaky Tests</h1>
-          <p className="text-xl mb-6">Centralized debugging insights for developers.</p>
-          <div className="flex justify-center space-x-4">
-            <Link to="/search" className="w-40 h-12 flex items-center justify-center bg-primary text-white rounded-md shadow-sm hover:scale-[1.02] hover:shadow-md hover:bg-primary_hover transition-all duration-normal ease-standard group relative overflow-hidden">
-              <span className="relative z-10">Start Hunting</span>
-              <span className="absolute inset-0 rounded-md bg-white opacity-0 group-active:opacity-20 transition-opacity duration-fast ease-soft"></span>
-            </Link>
-            <Link to="/flakes" className="w-40 h-12 flex items-center justify-center bg-secondary text-white rounded-md shadow-sm hover:scale-[1.02] hover:shadow-md transition-all duration-normal ease-standard">
-              View Flakes
-            </Link>
-          </div>
-        </div>
-      </section>
+    <div className="container mx-auto p-4">
+      <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
 
-      {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Main Content Area (70%) */}
-        <div className="lg:col-span-2">
-          <h2 className="text-2xl font-semibold text-text_light dark:text-text_dark mb-4">Overview</h2>
-          {/* Placeholder for main dashboard content */}
-          <div className="bg-surface_light dark:bg-surface_dark rounded-lg p-6 shadow-sm h-64 flex items-center justify-center">
-            <p className="text-muted">More dashboard content will go here.</p>
-          </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div className="bg-white p-4 rounded-lg shadow">
+          <h2 className="text-xl font-semibold mb-4">Flaky Test Trends</h2>
+          <LineChartComponent data={lineChartData} />
         </div>
+        <div className="bg-white p-4 rounded-lg shadow">
+          <h2 className="text-xl font-semibold mb-4">Flake Causes Distribution</h2>
+          <PieChartComponent data={pieChartData} />
+        </div>
+      </div>
 
-        {/* Sidebar (30%) */}
-        <div className="lg:col-span-1 space-y-6">
-          <RecentFlakes />
-          <TopSolutions />
-        </div>
+      <div className="bg-white p-4 rounded-lg shadow">
+        <h2 className="text-xl font-semibold mb-4">Recent Flaky Tests</h2>
+        <TableComponent data={tableData} columns={tableColumns} />
       </div>
     </div>
   );

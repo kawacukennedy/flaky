@@ -1,24 +1,37 @@
-import { Outlet } from 'react-router-dom';
-import TopNav from './components/layout/TopNav';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import DashboardPage from './pages/Dashboard';
+import FlakesPage from './pages/FlakesPage';
+import ProfilePage from './pages/ProfilePage';
+import SettingsPage from './pages/SettingsPage';
+import { ThemeProvider } from './ThemeInitializer';
+import GlobalToast from './components/layout/GlobalToast';
 import LeftNav from './components/layout/LeftNav';
-import { useTheme } from './ThemeInitializer';
+import TopNav from './components/layout/TopNav';
 
 function App() {
-  const { theme } = useTheme();
-
   return (
-    <div className={`flex h-screen text-text_light bg-bg_light dark:text-text_dark dark:bg-bg_dark font-sans ${theme === 'dark' ? 'dark' : ''}`}>
-      <LeftNav />
-      <div className="flex-1 flex flex-col">
-        <TopNav onSearch={(query) => console.log('Search from TopNav:', query)} />
-        <main className="flex-1 p-6 overflow-y-auto mx-auto w-full max-w-content-max">
-          <Outlet />
-        </main>
-      </div>
-    </div>
+    <ThemeProvider>
+      <Router>
+        <div className="flex h-screen bg-gray-100">
+          <LeftNav />
+          <div className="flex-1 flex flex-col overflow-hidden">
+            <TopNav />
+            <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-4">
+              <Routes>
+                <Route path="/" element={<DashboardPage />} />
+                <Route path="/dashboard" element={<DashboardPage />} />
+                <Route path="/flakes" element={<FlakesPage />} />
+                <Route path="/profile" element={<ProfilePage />} />
+                <Route path="/settings" element={<SettingsPage />} />
+                {/* Add more routes as needed */}
+              </Routes>
+            </main>
+          </div>
+        </div>
+        <GlobalToast />
+      </Router>
+    </ThemeProvider>
   );
 }
-
-export default App;
 
 export default App;

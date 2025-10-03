@@ -1,14 +1,14 @@
 import { configureStore } from '@reduxjs/toolkit';
+import testsReducer from './slices/testsSlice';
+import usersReducer from './slices/usersSlice';
 import toastReducer from './slices/toastSlice';
-import { api } from './services/api';
 
 export const store = configureStore({
   reducer: {
+    tests: testsReducer,
+    users: usersReducer,
     toast: toastReducer,
-    [api.reducerPath]: api.reducer,
   },
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(api.middleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

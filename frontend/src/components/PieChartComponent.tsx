@@ -1,48 +1,45 @@
-import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+// Purpose: Show flaky distribution
 
-interface SeverityData {
-  critical: number;
-  moderate: number;
-  minor: number;
-}
+import React from 'react';
+import { Pie } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  ArcElement,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 interface PieChartProps {
-  data: SeverityData;
+  data: {
+    labels: string[];
+    datasets: {
+      label: string;
+      data: number[];
+      backgroundColor: string[];
+      borderColor: string[];
+      borderWidth: number;
+    }[];
+  };
+  options?: any;
 }
 
-const COLORS: { [key: string]: string } = {
-  critical: '#DC2626', // danger
-  moderate: '#F59E0B', // warning
-  minor: '#16A34A',    // success
-};
+const PieChartComponent: React.FC<PieChartProps> = ({ data, options }) => {
+  const defaultOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top' as const,
+      },
+      title: {
+        display: true,
+        text: 'Flaky Distribution',
+      },
+    },
+  };
 
-const PieChartComponent = ({ data: severityData }: PieChartProps) => {
-  const chartData = Object.entries(severityData || {}).map(([name, value]) => ({
-    name,
-    value,
-  }));
-
-  return (
-    <ResponsiveContainer width="100%" height="100%">
-      <PieChart>
-        <Pie
-          data={chartData}
-          cx="50%"
-          cy="50%"
-          labelLine={false}
-          outerRadius={80}
-          fill="#8884d8"
-          dataKey="value"
-        >
-          {chartData.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={COLORS[entry.name]} />
-          ))}
-        </Pie>
-        <Tooltip />
-        <Legend />
-      </PieChart>
-    </ResponsiveContainer>
-  );
+  return <Pie options={options || defaultOptions} data={data} />;
 };
 
 export default PieChartComponent;
