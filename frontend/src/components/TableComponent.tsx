@@ -40,13 +40,17 @@ const TableComponent = ({ data }: TableComponentProps) => {
   });
 
   return (
-    <div className="p-2">
-      <table className="w-full">
-        <thead>
+    <div className="overflow-x-auto">
+      <table className="min-w-full divide-y divide-border dark:divide-gray-700">
+        <thead className="bg-gray-50 dark:bg-surface_dark">
           {table.getHeaderGroups().map(headerGroup => (
             <tr key={headerGroup.id}>
               {headerGroup.headers.map(header => (
-                <th key={header.id} className="border-b p-2 text-left">
+                <th
+                  key={header.id}
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-muted dark:text-gray-400 uppercase tracking-wider"
+                >
                   {header.isPlaceholder
                     ? null
                     : flexRender(
@@ -58,11 +62,11 @@ const TableComponent = ({ data }: TableComponentProps) => {
             </tr>
           ))}
         </thead>
-        <tbody>
+        <tbody className="bg-surface_light dark:bg-surface_dark divide-y divide-border dark:divide-gray-700">
           {table.getRowModel().rows.map(row => (
-            <tr key={row.id} className="border-b">
+            <tr key={row.id}>
               {row.getVisibleCells().map(cell => (
-                <td key={cell.id} className="p-2">
+                <td key={cell.id} className="px-6 py-4 whitespace-nowrap text-sm text-text_light dark:text-text_dark">
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
               ))}

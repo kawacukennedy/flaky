@@ -27,7 +27,7 @@ def pytest_generate_tests(metafunc):
 @pytest.fixture
 def repetition(request):
     """Fixture to provide the repetition number to the test."""
-    return request.param
+    return getattr(request, "param", 0)
 
 def get_git_commit_sha():
     """Gets the current git commit SHA."""

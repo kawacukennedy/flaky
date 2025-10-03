@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+html.dark {
+  color-scheme: dark;
+}
+
+body {
+  font-family: theme('fontFamily.sans');
+  line-height: theme('lineHeight.normal');
+}
+
 @keyframes gradient-shift {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }

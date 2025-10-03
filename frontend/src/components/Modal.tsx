@@ -40,7 +40,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
     >
       <div
         ref={modalRef}
-        className="bg-surface_light dark:bg-surface_dark rounded-lg shadow-lg p-6 w-full max-w-lg transform transition-all duration-200 ease-standard scale-95 opacity-0 data-[state=open]:scale-100 data-[state=open]:opacity-100"
+        className="bg-surface_light dark:bg-surface_dark rounded-lg shadow-lg p-6 w-full max-w-lg transform transition-all duration-150 ease-soft scale-95 opacity-0 data-[state=open]:scale-100 data-[state=open]:opacity-100"
         onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside modal
         data-state={isOpen ? 'open' : 'closed'}
       >

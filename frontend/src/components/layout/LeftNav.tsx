@@ -1,72 +1,47 @@
-import { Home, Search, BarChart, Settings, Lightbulb, User } from 'lucide-react';
+import React from 'react';
 import { NavLink } from 'react-router-dom';
 
-const LeftNav = () => {
-  const activeLinkClasses = "bg-primary text-white";
-  const inactiveLinkClasses = "text-text_light dark:text-text_dark hover:bg-gray-200 dark:hover:bg-gray-700";
+interface NavItemProps {
+  to: string;
+  label: string;
+  icon?: React.ReactNode;
+}
 
+const NavItem: React.FC<NavItemProps> = ({ to, label, icon }) => {
   return (
-    <aside className="w-80 bg-surface_light dark:bg-surface_dark shadow-md p-4 flex flex-col">
-      <div className="mb-6">
-        <span className="text-2xl font-bold text-primary">FlakeHunter</span>
+    <li>
+      <NavLink
+        to={to}
+        className={({ isActive }) =>
+          `flex items-center p-2 rounded-md transition-colors duration-normal ease-standard
+          ${isActive
+            ? 'bg-primary text-white shadow-sm'
+            : 'text-text_light dark:text-text_dark hover:bg-bg_light dark:hover:bg-bg_dark'
+          }`
+        }
+      >
+        {icon && <span className="mr-3">{icon}</span>}
+        {label}
+      </NavLink>
+    </li>
+  );
+};
+
+const LeftNav: React.FC = () => {
+  return (
+    <nav className="w-80 bg-surface_light dark:bg-surface_dark shadow-md h-full flex flex-col p-4">
+      <div className="mb-8">
+        <h2 className="text-xl font-bold text-text_light dark:text-text_dark">FlakeHunter</h2>
       </div>
-      <nav className="flex flex-col gap-2">
-        <NavLink
-          to="/"
-          className={({ isActive }) =>
-            `flex items-center gap-2 p-2 rounded-md ${isActive ? activeLinkClasses : inactiveLinkClasses}`
-          }
-        >
-          <Home className="w-5 h-5" />
-          <span>Dashboard</span>
-        </NavLink>
-        <NavLink
-          to="/search"
-          className={({ isActive }) =>
-            `flex items-center gap-2 p-2 rounded-md ${isActive ? activeLinkClasses : inactiveLinkClasses}`
-          }
-        >
-          <Search className="w-5 h-5" />
-          <span>Search</span>
-        </NavLink>
-        <NavLink
-          to="/flakes"
-          className={({ isActive }) =>
-            `flex items-center gap-2 p-2 rounded-md ${isActive ? activeLinkClasses : inactiveLinkClasses}`
-          }
-        >
-          <BarChart className="w-5 h-5" />
-          <span>Flakes</span>
-        </NavLink>
-        <NavLink
-          to="/solutions"
-          className={({ isActive }) =>
-            `flex items-center gap-2 p-2 rounded-md ${isActive ? activeLinkClasses : inactiveLinkClasses}`
-          }
-        >
-          <Lightbulb className="w-5 h-5" />
-          <span>Solutions</span>
-        </NavLink>
-        <NavLink
-          to="/profile"
-          className={({ isActive }) =>
-            `flex items-center gap-2 p-2 rounded-md ${isActive ? activeLinkClasses : inactiveLinkClasses}`
-          }
-        >
-          <User className="w-5 h-5" />
-          <span>Profile</span>
-        </NavLink>
-        <NavLink
-          to="/settings"
-          className={({ isActive }) =>
-            `flex items-center gap-2 p-2 rounded-md ${isActive ? activeLinkClasses : inactiveLinkClasses}`
-          }
-        >
-          <Settings className="w-5 h-5" />
-          <span>Settings</span>
-        </NavLink>
-      </nav>
-    </aside>
+      <ul className="space-y-2">
+        <NavItem to="/" label="Dashboard" icon="📊" />
+        <NavItem to="/flakes" label="Flakes" icon="🐛" />
+        <NavItem to="/solutions" label="Solutions" icon="💡" />
+        <NavItem to="/search" label="Search" icon="🔍" />
+        <NavItem to="/profile" label="Profile" icon="👤" />
+        <NavItem to="/settings" label="Settings" icon="⚙️" />
+      </ul>
+    </nav>
   );
 };
 

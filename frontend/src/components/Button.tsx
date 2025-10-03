@@ -1,74 +1,74 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface ButtonProps {
+  label: string;
   variant?: 'primary' | 'secondary';
-  size?: 'sm' | 'md' | 'lg';
+  size?: { width: number; height: number };
+  onClick?: () => void;
+  className?: string;
 }
 
 const Button: React.FC<ButtonProps> = ({
-  children,
-  onClick,
+  label,
   variant = 'primary',
-  size = 'md',
+  size,
+  onClick,
   className,
-  ...props
 }) => {
-  const [coords, setCoords] = useState({ x: -1, y: -1 });
-  const [isRippling, setIsRippling] = useState(false);
-  const buttonRef = useRef<HTMLButtonElement>(null);
+  const [ripples, setRipples] = useState<{ x: number; y: number; id: number }[]>([]);
 
-  useEffect(() => {
-    if (coords.x !== -1 && coords.y !== -1) {
-      setIsRippling(true);
-      setTimeout(() => setIsRippling(false), 300); // Ripple duration
-    } else {
-      setIsRippling(false);
-    }
-  }, [coords]);
+  const baseStyles = 'font-medium rounded-md transition-all duration-normal ease-standard hover:scale-[1.02] transform relative overflow-hidden';
 
-  useEffect(() => {
-    if (!isRippling) setCoords({ x: -1, y: -1 });
-  }, [isRippling]);
+  const variantStyles = {
+    primary:
+      'bg-primary text-white hover:bg-primary_hover shadow-sm hover:shadow-md',
+    secondary:
+      'bg-secondary text-white hover:opacity-90 shadow-sm',
+  };
+
+  const sizeStyles = size
+    ? `w-[${size.width}px] h-[${size.height}px]`
+    : 'px-4 py-2';
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    if (buttonRef.current) {
-      const rect = buttonRef.current.getBoundingClientRect();
-      setCoords({ x: event.clientX - rect.left, y: event.clientY - rect.top });
-    }
-    onClick?.(event);
-  };
+    const button = event.currentTarget;
+    const rect = button.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+    const id = Date.now();
 
-  const baseClasses = "relative overflow-hidden font-semibold rounded-md transition-all duration-200 ease-standard flex items-center justify-center";
+    setRipples((prevRipples) => [...prevRipples, { x, y, id }]);
 
-  const variantClasses = {
-    primary: "bg-primary text-white hover:bg-primary_hover shadow-md",
-    secondary: "bg-secondary text-white hover:bg-gray-600 shadow-sm",
-  };
+    setTimeout(() => {
+      setRipples((prevRipples) => prevRipples.filter((ripple) => ripple.id !== id));
+    }, 600); // Ripple animation duration
 
-  const sizeClasses = {
-    sm: "px-4 py-2 text-sm",
-    md: "px-6 py-3 text-base w-40 h-12", // Default size for CTA buttons
-    lg: "px-8 py-4 text-lg",
+    onClick?.();
   };
 
   return (
     <button
-      ref={buttonRef}
-      className={`${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${className || ''}`}
+      className={`${baseStyles} ${variantStyles[variant]} ${sizeStyles} ${className}`}
       onClick={handleClick}
-      {...props}
     >
-      {isRippling && coords.x !== -1 && coords.y !== -1 && (
+      {label}
+      {ripples.map((ripple) => (
         <span
-          className="ripple absolute bg-white opacity-30 rounded-full animate-ripple"
+          key={ripple.id}
+          className="absolute bg-white opacity-30 rounded-full animate-ripple"
           style={{
-            left: coords.x,
-            top: coords.y,
-            transform: 'translate(-50%, -50%) scale(0)',
+            animationDuration: '300ms',
+            animationTimingFunction: 'ease-out',
           }}
-        />
-      )}
-      <span className="relative z-10">{children}</span>
+          style={{
+            left: ripple.x,
+            top: ripple.y,
+            transform: 'translate(-50%, -50%)',
+            width: '0px',
+            height: '0px',
+          }}
+        ></span>
+      ))}
     </button>
   );
 };
