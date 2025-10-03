@@ -1,6 +1,6 @@
 // Purpose: Charts, tables, analytics overview
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import LineChartComponent from '../components/LineChartComponent';
 import PieChartComponent from '../components/PieChartComponent';
@@ -33,6 +33,11 @@ const DashboardPage: React.FC = () => {
       case 'delete_test':
         dispatch(removeTest(message.data.id));
         break;
+      case 'new_flaky_occurrence':
+        // Potentially update a test's status or flakiness score
+        // For now, we'll just refetch all tests to keep it simple
+        dispatch(fetchTests());
+        break;
       default:
         console.log('Unknown message type:', message.type);
     }
@@ -40,38 +45,38 @@ const DashboardPage: React.FC = () => {
 
   useWebSocket('ws://localhost:8000/ws/dashboard', { onMessage: handleWebSocketMessage });
 
-  // Dummy data for charts and table (will be replaced by real data from Redux store)
-  const lineChartData = {
-    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-    datasets: [
-      {
-        label: 'Flaky Tests',
-        data: [10, 15, 8, 12, 20, 18],
-        borderColor: 'rgb(255, 99, 132)',
-        backgroundColor: 'rgba(255, 99, 132, 0.5)',
-      },
-    ],
-  };
+  // Data transformation for charts
+  const flakyTests = useMemo(() => tests.filter(test => test.status === 'flaky'), [tests]); // Assuming 'status' field exists
+  const stableTests = useMemo(() => tests.filter(test => test.status === 'stable'), [tests]); // Assuming 'status' field exists
 
   const pieChartData = {
-    labels: ['Timing', 'Environment', 'Order Dependency', 'Shared State'],
+    labels: ['Flaky Tests', 'Stable Tests'],
     datasets: [
       {
-        label: 'Flake Causes',
-        data: [300, 50, 100, 75],
+        label: 'Test Distribution',
+        data: [flakyTests.length, stableTests.length],
         backgroundColor: [
           'rgba(255, 99, 132, 0.8)',
-          'rgba(54, 162, 235, 0.8)',
-          'rgba(255, 206, 86, 0.8)',
           'rgba(75, 192, 192, 0.8)',
         ],
         borderColor: [
           'rgba(255, 99, 132, 1)',
-          'rgba(54, 162, 235, 1)',
-          'rgba(255, 206, 86, 1)',
           'rgba(75, 192, 192, 1)',
         ],
         borderWidth: 1,
+      },
+    ],
+  };
+
+  // Placeholder for line chart data - would need more historical data
+  const lineChartData = {
+    labels: ['Today'],
+    datasets: [
+      {
+        label: 'Total Tests',
+        data: [tests.length],
+        borderColor: 'rgb(53, 162, 235)',
+        backgroundColor: 'rgba(53, 162, 235, 0.5)',
       },
     ],
   };
@@ -80,7 +85,7 @@ const DashboardPage: React.FC = () => {
     { key: 'id', header: 'ID' },
     { key: 'name', header: 'Test Name' },
     { key: 'project_id', header: 'Project ID' },
-    // Add more columns as needed
+    // Add more columns as needed, e.g., status, last_run, flakiness_score
   ];
 
   return (
@@ -89,11 +94,11 @@ const DashboardPage: React.FC = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         <div className="bg-white p-4 rounded-lg shadow">
-          <h2 className="text-xl font-semibold mb-4">Flaky Test Trends</h2>
+          <h2 className="text-xl font-semibold mb-4">Test Trends</h2>
           <LineChartComponent data={lineChartData} />
         </div>
         <div className="bg-white p-4 rounded-lg shadow">
-          <h2 className="text-xl font-semibold mb-4">Flake Causes Distribution</h2>
+          <h2 className="text-xl font-semibold mb-4">Test Distribution</h2>
           <PieChartComponent data={pieChartData} />
         </div>
       </div>

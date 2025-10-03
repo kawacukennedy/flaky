@@ -1,6 +1,6 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
-from .routers import tests, users, analysis
+from .routers import tests, users, analysis, plugins
 from .websockets import manager # Import the manager instance
 
 app = FastAPI()
@@ -10,6 +10,7 @@ app.add_middleware(CORSMiddleware, allow_origins=origins, allow_credentials=True
 app.include_router(tests.router, prefix='/tests')
 app.include_router(users.router, prefix='/users')
 app.include_router(analysis.router, prefix='/analysis')
+app.include_router(plugins.router, prefix='/plugins')
 
 @app.websocket("/ws/dashboard")
 async def websocket_endpoint(websocket: WebSocket):

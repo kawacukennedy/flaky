@@ -33,3 +33,12 @@ class UserResponse(BaseModel):
     is_admin: bool
     class Config:
         orm_mode = True
+
+class PluginTestPayload(BaseModel):
+    test_name: str
+    project_name: str
+    status: bool
+    duration: float | None = None
+    environment: dict | None = None
+    timestamp: datetime
+    stack_trace: str | None = None
