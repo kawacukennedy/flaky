@@ -1,27 +1,20 @@
 import React, { useEffect } from 'react';
-// import { useSelector, useDispatch } from 'react-redux';
-// import { RootState } from '../../app/store';
-// import { clearToast } from '../../app/slices/toastSlice';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from '../../app/store';
+import { clearToast } from '../../app/slices/toastSlice';
 
-interface GlobalToastProps {
-  message: string | null;
-  type: 'success' | 'error' | 'info' | 'warning' | null;
-  onClear: () => void;
-}
-
-const GlobalToast: React.FC<GlobalToastProps> = ({ message, type, onClear }) => {
-  // const dispatch = useDispatch();
-  // const { message, type, id } = useSelector((state: RootState) => state.toast);
+const GlobalToast: React.FC = () => {
+  const dispatch = useDispatch();
+  const { message, type, id } = useSelector((state: RootState) => state.toast);
 
   useEffect(() => {
     if (message) {
       const timer = setTimeout(() => {
-        // dispatch(clearToast());
-        onClear();
+        dispatch(clearToast());
       }, 5000); // Auto-clear after 5 seconds
       return () => clearTimeout(timer);
     }
-  }, [message, onClear]);
+  }, [message, dispatch, id]);
 
   if (!message) return null;
 
@@ -53,7 +46,7 @@ const GlobalToast: React.FC<GlobalToastProps> = ({ message, type, onClear }) => 
     >
       <p className="text-sm font-medium">{message}</p>
       <button
-        onClick={onClear}
+        onClick={() => dispatch(clearToast())}
         className="ml-4 p-1 rounded-full hover:bg-white hover:bg-opacity-20 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50"
         aria-label="Close toast"
       >
