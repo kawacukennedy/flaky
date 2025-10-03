@@ -1,26 +1,40 @@
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import TopNav from './components/layout/TopNav';
+import LeftNav from './components/layout/LeftNav';
+import GlobalToast from './components/layout/GlobalToast';
 import DashboardPage from './pages/DashboardPage';
+import SearchPage from './pages/SearchPage';
+import FlakesPage from './pages/FlakesPage';
+import SolutionsPage from './pages/SolutionsPage';
+import ProfilePage from './pages/ProfilePage';
 import TestDetailPage from './pages/TestDetailPage';
 import SettingsPage from './pages/SettingsPage';
 
 function App() {
+  const handleSearch = (query: string) => {
+    console.log('Search query:', query);
+    // Implement actual search logic or navigation later
+  };
+
   return (
     <Router>
-      <div className="bg-gray-100 min-h-screen">
-        <header className="bg-white shadow-sm">
-          <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-            <h1 className="text-2xl font-bold text-gray-900">FlakeHunter</h1>
-            <nav className="flex gap-4">
-              <Link to="/" className="text-sm font-medium text-gray-500 hover:text-gray-700">Dashboard</Link>
-              <Link to="/settings" className="text-sm font-medium text-gray-500 hover:text-gray-700">Settings</Link>
-            </nav>
-          </div>
-        </header>
-        <Routes>
-          <Route path="/" element={<DashboardPage />} />
-          <Route path="/tests/:id" element={<TestDetailPage />} />
-          <Route path="/settings" element={<SettingsPage />} />
-        </Routes>
+      <div className="bg-bg_light dark:bg-bg_dark min-h-screen flex">
+        <LeftNav />
+        <div className="flex-1 flex flex-col">
+          <TopNav onSearch={handleSearch} />
+          <main className="flex-1 p-6 pt-20"> {/* pt-20 (80px) to account for TopNav height (64px) + some spacing */}
+            <Routes>
+              <Route path="/" element={<DashboardPage />} />
+              <Route path="/search" element={<SearchPage />} />
+              <Route path="/flakes" element={<FlakesPage />} />
+              <Route path="/solutions" element={<SolutionsPage />} />
+              <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/tests/:id" element={<TestDetailPage />} />
+              <Route path="/settings" element={<SettingsPage />} />
+            </Routes>
+          </main>
+        </div>
+        <GlobalToast />
       </div>
     </Router>
   );
