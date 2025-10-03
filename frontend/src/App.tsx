@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import TopNav from './components/layout/TopNav';
 import LeftNav from './components/layout/LeftNav';
-import GlobalToast from './components/layout/GlobalToast';
+import GlobalToast from './components/layout/GlobalToast'; // Added import
 
 function App() {
   const [darkMode, setDarkMode] = useState(
@@ -29,13 +29,12 @@ function App() {
     <div className="flex h-screen text-text_light bg-bg_light dark:text-text_dark dark:bg-bg_dark font-sans">
       <LeftNav />
       <div className="flex-1 flex flex-col">
-        <TopNav />
-        <main className="flex-1 p-6 overflow-y-auto">
+        <TopNav onSearch={(query) => console.log('Search from TopNav:', query)} />
+        <main className="flex-1 p-6 overflow-y-auto mx-auto w-full max-w-content-max"> {/* Modified */}
           <Outlet />
         </main>
+        <GlobalToast /> {/* Added */}
       </div>
-      <GlobalToast />
-
     </div>
   );
 }

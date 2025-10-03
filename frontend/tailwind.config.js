@@ -3,23 +3,45 @@ export default {
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
-    "./src/index.css",
   ],
-  darkMode: 'class',
   theme: {
     extend: {
       spacing: {
-        0: '0px',
-        1: '4px',
-        2: '8px',
-        3: '12px',
-        4: '16px',
-        5: '20px',
-        6: '24px',
-        8: '32px',
-        10: '40px',
-        12: '48px',
-        16: '64px',
+        '0': '0px',
+        '1': '4px',
+        '2': '8px',
+        '3': '12px',
+        '4': '16px',
+        '5': '20px',
+        '6': '24px',
+        '8': '32px',
+        '10': '40px',
+        '12': '48px',
+        '16': '64px',
+      },
+      fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+      },
+      fontSize: {
+        xs: ['12px', { lineHeight: '1.5' }], // Default line height for body text
+        sm: ['14px', { lineHeight: '1.5' }],
+        base: ['16px', { lineHeight: '1.5' }],
+        lg: ['18px', { lineHeight: '1.5' }],
+        xl: ['20px', { lineHeight: '1.5' }],
+        '2xl': ['24px', { lineHeight: '1.5' }],
+        '3xl': ['32px', { lineHeight: '1.25' }], // tight
+        '4xl': ['40px', { lineHeight: '1.25' }], // tight
+      },
+      fontWeight: {
+        regular: '400',
+        medium: '500',
+        semibold: '600',
+        bold: '700',
+      },
+      lineHeight: {
+        tight: '1.25',
+        normal: '1.5',
+        loose: '1.75',
       },
       colors: {
         primary: '#2563EB',
@@ -48,37 +70,6 @@ export default {
         sm: '0 1px 2px rgba(2,6,23,0.06)',
         md: '0 6px 18px rgba(2,6,23,0.08)',
       },
-      screens: {
-        sm: '640px',
-        md: '768px',
-        lg: '1024px',
-        xl: '1280px',
-        '2xl': '1536px',
-      },
-      fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
-      },
-      fontSize: {
-        xs: '12px',
-        sm: '14px',
-        base: '16px',
-        lg: '18px',
-        xl: '20px',
-        '2xl': '24px',
-        '3xl': '32px',
-        '4xl': '40px',
-      },
-      fontWeight: {
-        regular: '400',
-        medium: '500',
-        semibold: '600',
-        bold: '700',
-      },
-      lineHeight: {
-        tight: '1.25',
-        normal: '1.5',
-        loose: '1.75',
-      },
       transitionDuration: {
         fast: '150ms',
         normal: '250ms',
@@ -87,6 +78,16 @@ export default {
       transitionTimingFunction: {
         standard: 'cubic-bezier(0.4,0,0.2,1)',
         soft: 'cubic-bezier(0.2,0.9,0.2,1)',
+      },
+      screens: {
+        sm: '640px',
+        md: '768px',
+        lg: '1024px',
+        xl: '1280px',
+        '2xl': '1536px',
+      },
+      width: {
+        'content-max': '1200px',
       },
     },
   },

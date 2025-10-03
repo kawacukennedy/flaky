@@ -1,96 +1,109 @@
-import { render, screen, act } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import { Provider } from 'react-redux';
-import { configureStore } from '@reduxjs/toolkit';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import configureStore from 'redux-mock-store';
 import GlobalToast from './GlobalToast';
-import toastReducer, { addToast } from '../../app/slices/toastSlice';
+import { showToast, clearToast } from '../../app/slices/toastSlice';
+import { RootState } from '../../app/store'; // Assuming RootState is exported from store
 
-// Mock store for tests
-const createMockStore = (initialState: any) =>
-  configureStore({
-    reducer: {
-      toast: toastReducer,
-    },
-    preloadedState: initialState,
-  });
+const mockStore = configureStore([]);
 
 describe('GlobalToast', () => {
+  let store: ReturnType<typeof mockStore>;
+
   beforeEach(() => {
-    vi.useFakeTimers();
+    store = mockStore({
+      toast: {
+        message: null,
+        type: null,
+        id: null,
+      },
+    } as RootState); // Cast to RootState
   });
 
-  it('renders a success toast message', () => {
-    const store = createMockStore({ toast: { toasts: [] } });
-    store.dispatch(addToast({ message: 'Success!', type: 'success' }));
+  it('does not render when no toast message is present', () => {
     render(
       <Provider store={store}>
         <GlobalToast />
       </Provider>
     );
-    expect(screen.getByText('Success!')).toBeInTheDocument();
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+  });
+
+  it('renders a success toast message', () => {
+    store.dispatch(showToast({ message: 'Operation successful!', type: 'success' }));
+    render(
+      <Provider store={store}>
+        <GlobalToast />
+      </Provider>
+    );
+    expect(screen.getByText('Operation successful!')).toBeInTheDocument();
     expect(screen.getByRole('alert')).toHaveClass('bg-success');
   });
 
   it('renders an error toast message', () => {
-    const store = createMockStore({ toast: { toasts: [] } });
-    store.dispatch(addToast({ message: 'Error!', type: 'error' }));
+    store.dispatch(showToast({ message: 'Operation failed!', type: 'error' }));
     render(
       <Provider store={store}>
         <GlobalToast />
       </Provider>
     );
-    expect(screen.getByText('Error!')).toBeInTheDocument();
+    expect(screen.getByText('Operation failed!')).toBeInTheDocument();
     expect(screen.getByRole('alert')).toHaveClass('bg-danger');
   });
 
-  it('dismisses toast automatically after duration', async () => {
-    const store = createMockStore({ toast: { toasts: [] } });
-    store.dispatch(addToast({ id: 'test-toast', message: 'Auto dismiss', type: 'info', duration: 1000 }));
+  it('renders an info toast message', () => {
+    store.dispatch(showToast({ message: 'Information alert!', type: 'info' }));
     render(
       <Provider store={store}>
         <GlobalToast />
       </Provider>
     );
-    expect(screen.getByText('Auto dismiss')).toBeInTheDocument();
-
-    act(() => {
-      vi.advanceTimersByTime(1000);
-    });
-
-    expect(screen.queryByText('Auto dismiss')).not.toBeInTheDocument();
+    expect(screen.getByText('Information alert!')).toBeInTheDocument();
+    expect(screen.getByRole('alert')).toHaveClass('bg-info');
   });
 
-  it('does not dismiss toast with duration 0', () => {
-    const store = createMockStore({ toast: { toasts: [] } });
-    store.dispatch(addToast({ id: 'test-toast', message: 'Persistent', type: 'warning', duration: 0 }));
+  it('renders a warning toast message', () => {
+    store.dispatch(showToast({ message: 'Warning!', type: 'warning' }));
     render(
       <Provider store={store}>
         <GlobalToast />
       </Provider>
     );
-    expect(screen.getByText('Persistent')).toBeInTheDocument();
-
-    act(() => {
-      vi.advanceTimersByTime(5000);
-    });
-
-    expect(screen.getByText('Persistent')).toBeInTheDocument();
+    expect(screen.getByText('Warning!')).toBeInTheDocument();
+    expect(screen.getByRole('alert')).toHaveClass('bg-warning');
   });
 
-  it('dismisses toast when close button is clicked', async () => {
-    const store = createMockStore({ toast: { toasts: [] } });
-    store.dispatch(addToast({ id: 'test-toast', message: 'Closable', type: 'info' }));
+  it('dispatches clearToast when the close button is clicked', () => {
+    store.dispatch(showToast({ message: 'Test message', type: 'info' }));
     render(
       <Provider store={store}>
         <GlobalToast />
       </Provider>
     );
-    expect(screen.getByText('Closable')).toBeInTheDocument();
+    fireEvent.click(screen.getByLabelText('Close toast'));
+    const actions = store.getActions();
+    expect(actions).toContainEqual(clearToast());
+  });
 
-    const closeButton = screen.getByLabelText('Close toast');
-    await userEvent.click(closeButton);
+  it('dispatches clearToast automatically after 5 seconds', async () => {
+    jest.useFakeTimers();
+    store.dispatch(showToast({ message: 'Auto-clear message', type: 'success' }));
+    render(
+      <Provider store={store}>
+        <GlobalToast />
+      </Provider>
+    );
 
-    expect(screen.queryByText('Closable')).not.toBeInTheDocument();
+    expect(screen.getByText('Auto-clear message')).toBeInTheDocument();
+
+    jest.advanceTimersByTime(5000);
+
+    await waitFor(() => {
+      const actions = store.getActions();
+      expect(actions).toContainEqual(clearToast());
+    });
+
+    jest.useRealTimers();
   });
 });

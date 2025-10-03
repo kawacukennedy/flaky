@@ -1,58 +1,62 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../app/store';
-import { removeToast, Toast } from '../../app/slices/toastSlice';
+import { clearToast } from '../../app/slices/toastSlice';
+import { Transition } from '@headlessui/react'; // Assuming @headlessui/react is available for transitions
 
 const GlobalToast: React.FC = () => {
-  const toasts = useSelector((state: RootState) => state.toast.toasts);
   const dispatch = useDispatch();
+  const { message, type, id } = useSelector((state: RootState) => state.toast);
 
   useEffect(() => {
-    toasts.forEach((toast) => {
-      if (toast.duration !== 0) {
-        const timer = setTimeout(() => {
-          dispatch(removeToast(toast.id));
-        }, toast.duration || 3000); // Default to 3 seconds
+    if (message) {
+      const timer = setTimeout(() => {
+        dispatch(clearToast());
+      }, 5000); // Toast disappears after 5 seconds
+      return () => clearTimeout(timer);
+    }
+  }, [message, dispatch, id]); // Added id to dependency array to re-trigger effect on new toast with same message
 
-        return () => clearTimeout(timer);
-      }
-    });
-  }, [toasts, dispatch]);
-
-  const getToastStyles = (type: Toast['type']) => {
+  const getToastClasses = () => {
+    let baseClasses = 'fixed bottom-4 right-4 p-4 rounded-md shadow-lg text-white z-50';
     switch (type) {
       case 'success':
-        return 'bg-success text-white';
+        return `${baseClasses} bg-success`;
       case 'error':
-        return 'bg-danger text-white';
-      case 'warning':
-        return 'bg-warning text-white';
+        return `${baseClasses} bg-danger`;
       case 'info':
-        return 'bg-info text-white';
+        return `${baseClasses} bg-info`;
+      case 'warning':
+        return `${baseClasses} bg-warning`;
       default:
-        return 'bg-muted text-white';
+        return baseClasses;
     }
   };
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 space-y-2">
-      {toasts.map((toast) => (
-        <div
-          key={toast.id}
-          className={`px-4 py-2 rounded-md shadow-md flex items-center justify-between ${getToastStyles(toast.type)}`}
-          role="alert"
-        >
-          <span>{toast.message}</span>
+    <Transition
+      show={!!message}
+      as={React.Fragment}
+      enter="transition ease-out duration-200"
+      enterFrom="opacity-0 translate-y-2 scale-95"
+      enterTo="opacity-100 translate-y-0 scale-100"
+      leave="transition ease-in duration-150"
+      leaveFrom="opacity-100 translate-y-0 scale-100"
+      leaveTo="opacity-0 translate-y-2 scale-95"
+    >
+      {message && (
+        <div className={getToastClasses()} role="alert" aria-live="assertive" aria-atomic="true">
+          <p>{message}</p>
           <button
-            onClick={() => dispatch(removeToast(toast.id))}
-            className="ml-4 text-white opacity-75 hover:opacity-100"
+            onClick={() => dispatch(clearToast())}
+            className="ml-4 text-white hover:text-gray-200 focus:outline-none"
             aria-label="Close toast"
           >
             &times;
           </button>
         </div>
-      ))}
-    </div>
+      )}
+    </Transition>
   );
 };
 

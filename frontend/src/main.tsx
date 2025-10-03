@@ -61,6 +61,7 @@ createRoot(document.getElementById('root')!).render(
     <Provider store={store}>
       <ThemeInitializer>
         <RouterProvider router={router} />
+        <GlobalToast />
       </ThemeInitializer>
     </Provider>
   </StrictMode>,

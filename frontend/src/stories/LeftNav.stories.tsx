@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter as Router } from 'react-router-dom';
 import LeftNav from '../components/layout/LeftNav';
 
-const meta: Meta<typeof LeftNav> = {
+const meta = {
   title: 'Layout/LeftNav',
   component: LeftNav,
   parameters: {
@@ -11,16 +11,42 @@ const meta: Meta<typeof LeftNav> = {
   tags: ['autodocs'],
   decorators: [
     (Story) => (
-      <BrowserRouter>
-        <div style={{ height: '100vh', display: 'flex' }}>
+      <Router>
+        <div className="flex h-screen">
           <Story />
+          <div className="flex-1 p-4">
+            {/* Content area to show layout alongside LeftNav */}
+            <h1 className="text-2xl font-bold">Main Content Area</h1>
+            <p>This is a placeholder for the main content to demonstrate the LeftNav layout.</p>
+          </div>
         </div>
-      </BrowserRouter>
+      </Router>
     ),
   ],
-};
+} satisfies Meta<typeof LeftNav>;
 
 export default meta;
-type Story = StoryObj<typeof LeftNav>;
+type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  args: {},
+};
+
+export const ActiveFlakes: Story = {
+  parameters: {
+    reactRouter: {
+      routePath: '/flakes',
+      // You can also specify search, hash, etc.
+    },
+  },
+  args: {},
+};
+
+export const ActiveProfile: Story = {
+  parameters: {
+    reactRouter: {
+      routePath: '/profile',
+    },
+  },
+  args: {},
+};

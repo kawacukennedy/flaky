@@ -9,47 +9,51 @@ const meta: Meta<typeof Button> = {
   },
   tags: ['autodocs'],
   argTypes: {
-    variant: {
-      control: 'select',
-      options: ['primary', 'secondary'],
-    },
+    label: { control: 'text' },
+    variant: { control: 'select', options: ['primary', 'secondary', 'danger', 'success', 'warning', 'info', 'muted'] },
+    size: { control: 'object' },
     onClick: { action: 'clicked' },
-    size: {
-      control: 'object',
-      description: 'Optional size object { width: number, height: number }',
-    },
   },
 };
 
 export default meta;
-type Story = StoryObj<typeof Button>;
+type Story = StoryObj<typeof meta>;
 
 export const Primary: Story = {
   args: {
-    label: 'Start Hunting',
+    label: 'Primary Button',
     variant: 'primary',
+    size: { width: 160, height: 48 },
   },
 };
 
 export const Secondary: Story = {
   args: {
-    label: 'View Flakes',
+    label: 'Secondary Button',
     variant: 'secondary',
+    size: { width: 160, height: 48 },
   },
 };
 
-export const LargePrimary: Story = {
+export const Small: Story = {
   args: {
-    label: 'Large Primary',
+    label: 'Small Button',
     variant: 'primary',
-    size: { width: 160, height: 48 },
+    size: { width: 100, height: 32 },
   },
 };
 
-export const LargeSecondary: Story = {
+export const Large: Story = {
   args: {
-    label: 'Large Secondary',
-    variant: 'secondary',
-    size: { width: 160, height: 48 },
+    label: 'Large Button',
+    variant: 'primary',
+    size: { width: 200, height: 56 },
+  },
+};
+
+export const Danger: Story = {
+  args: {
+    label: 'Danger Button',
+    variant: 'danger',
   },
 };

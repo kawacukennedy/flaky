@@ -2,18 +2,17 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import GlobalToast from '../components/layout/GlobalToast';
-import toastReducer, { addToast } from '../app/slices/toastSlice';
+import toastReducer, { showToast } from '../app/slices/toastSlice';
+import { useEffect } from 'react';
 
 // Mock store for Storybook
-const createMockStore = (initialState: any) =>
-  configureStore({
-    reducer: {
-      toast: toastReducer,
-    },
-    preloadedState: initialState,
-  });
+const store = configureStore({
+  reducer: {
+    toast: toastReducer,
+  },
+});
 
-const meta: Meta<typeof GlobalToast> = {
+const meta = {
   title: 'Layout/GlobalToast',
   component: GlobalToast,
   parameters: {
@@ -21,70 +20,63 @@ const meta: Meta<typeof GlobalToast> = {
   },
   tags: ['autodocs'],
   decorators: [
-    (Story, context) => {
-      const store = createMockStore(context.args.initialReduxState);
-      // Dispatch toasts for the story
-      context.args.toastsToDispatch.forEach((toast: any) => store.dispatch(addToast(toast)));
-      return (
-        <Provider store={store}>
-          <Story />
-        </Provider>
-      );
-    },
+    (Story) => (
+      <Provider store={store}>
+        <Story />
+      </Provider>
+    ),
   ],
-  argTypes: {
-    // These are not direct props of GlobalToast, but used by the decorator
-    initialReduxState: { control: 'object', description: 'Initial Redux state for the toast slice' },
-    toastsToDispatch: { control: 'object', description: 'Array of toasts to dispatch for the story' },
-  },
-};
+} satisfies Meta<typeof GlobalToast>;
 
 export default meta;
-type Story = StoryObj<typeof GlobalToast>;
+type Story = StoryObj<typeof meta>;
 
-export const SuccessToast: Story = {
-  args: {
-    initialReduxState: { toast: { toasts: [] } },
-    toastsToDispatch: [
-      { message: 'Operation successful!', type: 'success', duration: 5000 },
-    ],
-  },
+const ToastTrigger = ({ message, type }: { message: string; type: 'success' | 'error' | 'info' | 'warning' }) => {
+  const dispatch = store.dispatch;
+  useEffect(() => {
+    dispatch(showToast({ message, type }));
+  }, [message, type, dispatch]);
+  return null;
 };
 
-export const ErrorToast: Story = {
+export const Success: Story = {
   args: {
-    initialReduxState: { toast: { toasts: [] } },
-    toastsToDispatch: [
-      { message: 'Something went wrong.', type: 'error', duration: 0 },
-    ],
+    // No direct args for GlobalToast, it consumes from Redux
   },
+  render: () => (
+    <>
+      <ToastTrigger message="This is a success message!" type="success" />
+      <GlobalToast />
+    </>
+  ),
 };
 
-export const WarningToast: Story = {
-  args: {
-    initialReduxState: { toast: { toasts: [] } },
-    toastsToDispatch: [
-      { message: 'Please review your changes.', type: 'warning', duration: 4000 },
-    ],
-  },
+export const Error: Story = {
+  args: {},
+  render: () => (
+    <>
+      <ToastTrigger message="This is an error message!" type="error" />
+      <GlobalToast />
+    </>
+  ),
 };
 
-export const InfoToast: Story = {
-  args: {
-    initialReduxState: { toast: { toasts: [] } },
-    toastsToDispatch: [
-      { message: 'New update available.', type: 'info', duration: 3000 },
-    ],
-  },
+export const Info: Story = {
+  args: {},
+  render: () => (
+    <>
+      <ToastTrigger message="This is an info message!" type="info" />
+      <GlobalToast />
+    </>
+  ),
 };
 
-export const MultipleToasts: Story = {
-  args: {
-    initialReduxState: { toast: { toasts: [] } },
-    toastsToDispatch: [
-      { message: 'First success message.', type: 'success', duration: 2000 },
-      { message: 'Second info message.', type: 'info', duration: 3000 },
-      { message: 'Third error message.', type: 'error', duration: 0 },
-    ],
-  },
+export const Warning: Story = {
+  args: {},
+  render: () => (
+    <>
+      <ToastTrigger message="This is a warning message!" type="warning" />
+      <GlobalToast />
+    </>
+  ),
 };

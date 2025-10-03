@@ -1,82 +1,88 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Search } from 'lucide-react';
 import SearchFilter from './SearchFilter';
+import clsx from 'clsx';
 
 interface SearchBarProps {
-  onSearch: (query: string, filters: Record<string, string>) => void;
+  onSearch: (query: string) => void;
+  onFilterChange: (filterName: string, value: string) => void;
+  currentFilters: { source: string; date: string; sort: string };
 }
 
-const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [activeFilters, setActiveFilters] = useState<Record<string, string>>({});
+const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onFilterChange, currentFilters }) => {
+  const [inputValue, setInputValue] = useState('');
   const [isFocused, setIsFocused] = useState(false);
-  const [hasError, setHasError] = useState(false); // Placeholder for error state
+  const [isError, setIsError] = useState(false); // For micro-interaction error state
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  const debounceTimeoutRef = useRef<number | null>(null);
-
-  const searchBarSpec = {
-    placeholder: "Search flaky tests, logs, or errors...",
-    height_px: 48,
-    debounce_ms: 300,
-    filters: [
-      { label: "Source", options: ["All", "CI Logs", "GitHub", "Docs"], default: "All" },
-      { label: "Date", options: ["7d", "24h", "30d"], default: "7d" },
-      { label: "Sort", options: ["Relevance", "Most Recent"], default: "Relevance" }
-    ],
-    micro_interactions: {
-      focus: "glow border #2563EB 200ms",
-      error: "shake 2px 150ms + border #DC2626"
-    }
-  };
-
+  // Debounce search input
   useEffect(() => {
-    if (debounceTimeoutRef.current) {
-      clearTimeout(debounceTimeoutRef.current);
-    }
-    debounceTimeoutRef.current = window.setTimeout(() => {
-      onSearch(searchQuery, activeFilters);
-    }, searchBarSpec.debounce_ms);
+    const handler = setTimeout(() => {
+      onSearch(inputValue);
+    }, 300); // debounce_ms: 300
 
     return () => {
-      if (debounceTimeoutRef.current) {
-        clearTimeout(debounceTimeoutRef.current);
-      }
+      clearTimeout(handler);
     };
-  }, [searchQuery, activeFilters, onSearch, searchBarSpec.debounce_ms]);
+  }, [inputValue, onSearch]);
 
-  const handleFilterChange = (label: string, value: string) => {
-    setActiveFilters((prevFilters) => ({
-      ...prevFilters,
-      [label]: value,
-    }));
+  const handleFocus = () => setIsFocused(true);
+  const handleBlur = () => setIsFocused(false);
+
+  // Simulate error for demonstration
+  const triggerError = () => {
+    setIsError(true);
+    setTimeout(() => setIsError(false), 150); // shake 2px 150ms
   };
 
-  const inputHeight = `${searchBarSpec.height_px}px`;
-
-  const focusStyles = isFocused ? 'focus:ring-2 focus:ring-primary focus:border-transparent' : '';
-  const errorStyles = hasError ? 'border-danger animate-shake' : '';
-
   return (
-    <div className="flex flex-col space-y-4">
-      <input
-        type="text"
-        placeholder={searchBarSpec.placeholder}
-        className={`w-full px-4 py-2 rounded-md border border-border dark:border-surface_dark bg-bg_light dark:bg-bg_dark text-text_light dark:text-text_dark outline-none ${focusStyles} ${errorStyles}`}
-        style={{ height: inputHeight }}
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
-      />
-      <div className="flex space-x-4">
-        {searchBarSpec.filters.map((filter) => (
-          <SearchFilter
-            key={filter.label}
-            label={filter.label}
-            options={filter.options}
-            defaultOption={filter.default}
-            onFilterChange={(value) => handleFilterChange(filter.label, value)}
-          />
-        ))}
+    <div className="mb-6">
+      <div
+        className={clsx(
+          'relative flex items-center h-12 rounded-md bg-bg_light dark:bg-surface_dark border',
+          'transition-all duration-200',
+          isFocused ? 'ring-2 ring-primary border-transparent' : 'border-border',
+          isError && 'animate-shake border-danger' // micro_interactions: error
+        )}
+      >
+        <Search className="h-5 w-5 text-muted ml-4" />
+        <input
+          ref={inputRef}
+          type="text"
+          placeholder="Search flaky tests, logs, or errors..."
+          className="flex-1 h-full px-4 bg-transparent focus:outline-none text-text_light dark:text-text_dark"
+          aria-label="Search input"
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+        />
+        {/* Optional: Add a button to trigger error for testing */}
+        {/* <button onClick={triggerError} className="px-3 text-sm text-red-500">Error</button> */}
+      </div>
+
+      <div className="flex space-x-4 mt-4">
+        <SearchFilter
+          label="Source"
+          options={['CI Logs', 'GitHub', 'Docs']}
+          defaultValue="All"
+          currentValue={currentFilters.source}
+          onChange={(value) => handleFilterChange('source', value)}
+        />
+        <SearchFilter
+          label="Date"
+          options={['24h', '7d', '30d']}
+          defaultValue="7d"
+          currentValue={currentFilters.date}
+          onChange={(value) => handleFilterChange('date', value)}
+        />
+        <SearchFilter
+          label="Sort"
+          options={['Relevance', 'Most Recent']}
+          defaultValue="Relevance"
+          currentValue={currentFilters.sort}
+          onChange={(value) => handleFilterChange('sort', value)}
+        />
       </div>
     </div>
   );

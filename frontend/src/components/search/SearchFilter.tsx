@@ -1,45 +1,65 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { ChevronDown } from 'lucide-react';
+import clsx from 'clsx';
 
 interface SearchFilterProps {
   label: string;
   options: string[];
   defaultValue: string;
-  selectedValue: string;
+  currentValue: string;
   onChange: (value: string) => void;
 }
 
-const SearchFilter: React.FC<SearchFilterProps> = ({
-  label,
-  options,
-  defaultValue,
-  selectedValue,
-  onChange,
-}) => {
+const SearchFilter: React.FC<SearchFilterProps> = ({ label, options, defaultValue, currentValue, onChange }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleSelect = (value: string) => {
+    onChange(value);
+    setIsOpen(false);
+  };
+
   return (
-    <div className="relative inline-block text-left">
-      <label htmlFor={`filter-${label}`} className="sr-only">{label}</label>
-      <select
-        id={`filter-${label}`}
-        className="block appearance-none w-full bg-surface_light dark:bg-surface_dark border border-border dark:border-surface_dark text-text_light dark:text-text_dark py-2 px-4 pr-8 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 ease-standard"
-        value={selectedValue}
-        onChange={(e) => onChange(e.target.value)}
+    <div className="relative">
+      <button
+        type="button"
+        className={clsx(
+          'flex items-center justify-between px-4 py-2 rounded-md border',
+          'bg-bg_light dark:bg-surface_dark text-text_light dark:text-text_dark border-border',
+          'focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent'
+        )}
+        onClick={() => setIsOpen(!isOpen)}
+        aria-haspopup="true"
+        aria-expanded={isOpen}
       >
-        <option value={defaultValue}>{defaultValue}</option>
-        {options.map((option) => (
-          <option key={option} value={option}>
-            {option}
-          </option>
-        ))}
-      </select>
-      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-text_light dark:text-text_dark">
-        <svg
-          className="fill-current h-4 w-4"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 20 20"
+        <span>{label}: <span className="font-medium">{currentValue || defaultValue}</span></span>
+        <ChevronDown className={clsx('h-4 w-4 ml-2 transition-transform duration-200', isOpen && 'rotate-180')} />
+      </button>
+
+      {isOpen && (
+        <ul
+          className="absolute z-10 mt-1 w-48 bg-surface_light dark:bg-surface_dark rounded-md shadow-lg border border-border py-1"
+          role="menu"
+          aria-orientation="vertical"
+          aria-labelledby={`filter-button-${label}`}
         >
-          <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 6.757 7.586 5.343 9z" />
-        </svg>
-      </div>
+          {options.map((option) => (
+            <li key={option}>
+              <button
+                type="button"
+                className={clsx(
+                  'block w-full text-left px-4 py-2 text-sm',
+                  'text-text_light dark:text-text_dark hover:bg-bg_light dark:hover:bg-bg_dark',
+                  currentValue === option && 'bg-primary text-white hover:bg-primary dark:hover:bg-primary'
+                )}
+                role="menuitem"
+                onClick={() => handleSelect(option)}
+              >
+                {option}
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };

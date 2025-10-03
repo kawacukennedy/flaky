@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { ButtonHTMLAttributes } from 'react';
+import clsx from 'clsx';
 
-interface ButtonProps {
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   label: string;
-  variant?: 'primary' | 'secondary';
-  size?: { width: number; height: number };
+  variant?: 'primary' | 'secondary' | 'danger' | 'success' | 'warning' | 'info' | 'muted';
+  size?: { width?: number; height?: number };
   onClick?: () => void;
-  className?: string;
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -14,61 +14,57 @@ const Button: React.FC<ButtonProps> = ({
   size,
   onClick,
   className,
+  ...props
 }) => {
-  const [ripples, setRipples] = useState<{ x: number; y: number; id: number }[]>([]);
-
-  const baseStyles = 'font-medium rounded-md transition-all duration-normal ease-standard hover:scale-[1.02] transform relative overflow-hidden';
+  const baseStyles = 'inline-flex items-center justify-center font-medium rounded-md transition-all duration-fast ease-standard';
 
   const variantStyles = {
-    primary:
-      'bg-primary text-white hover:bg-primary_hover shadow-sm hover:shadow-md',
-    secondary:
-      'bg-secondary text-white hover:opacity-90 shadow-sm',
+    primary: 'bg-primary text-white hover:bg-primary_hover shadow-sm',
+    secondary: 'bg-secondary text-white hover:bg-gray-600 shadow-sm',
+    danger: 'bg-danger text-white hover:bg-red-700 shadow-sm',
+    success: 'bg-success text-white hover:bg-green-700 shadow-sm',
+    warning: 'bg-warning text-white hover:bg-yellow-700 shadow-sm',
+    info: 'bg-info text-white hover:bg-blue-700 shadow-sm',
+    muted: 'bg-muted text-white hover:bg-gray-500 shadow-sm',
   };
 
   const sizeStyles = size
-    ? `w-[${size.width}px] h-[${size.height}px]`
+    ? { width: size.width ? `${size.width}px` : 'auto', height: size.height ? `${size.height}px` : 'auto' }
     : 'px-4 py-2';
 
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+  // Ripple effect (simplified for now, full implementation might require a separate hook/component)
+  const handleRipple = (event: React.MouseEvent<HTMLButtonElement>) => {
     const button = event.currentTarget;
-    const rect = button.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
-    const id = Date.now();
+    const circle = document.createElement('span');
+    const diameter = Math.max(button.clientWidth, button.clientHeight);
+    const radius = diameter / 2;
 
-    setRipples((prevRipples) => [...prevRipples, { x, y, id }]);
+    circle.style.width = circle.style.height = `${diameter}px`;
+    circle.style.left = `${event.clientX - button.offsetLeft - radius}px`;
+    circle.style.top = `${event.clientY - button.offsetTop - radius}px`;
+    circle.classList.add('ripple');
 
-    setTimeout(() => {
-      setRipples((prevRipples) => prevRipples.filter((ripple) => ripple.id !== id));
-    }, 600); // Ripple animation duration
+    const ripple = button.getElementsByClassName('ripple')[0];
 
-    onClick?.();
+    if (ripple) {
+      ripple.remove();
+    }
+
+    button.appendChild(circle);
+
+    if (onClick) {
+      onClick();
+    }
   };
 
   return (
     <button
-      className={`${baseStyles} ${variantStyles[variant]} ${sizeStyles} ${className}`}
-      onClick={handleClick}
+      className={clsx(baseStyles, variantStyles[variant], className, 'relative overflow-hidden')}
+      style={typeof sizeStyles === 'object' ? sizeStyles : undefined}
+      onClick={handleRipple}
+      {...props}
     >
       {label}
-      {ripples.map((ripple) => (
-        <span
-          key={ripple.id}
-          className="absolute bg-white opacity-30 rounded-full animate-ripple"
-          style={{
-            animationDuration: '300ms',
-            animationTimingFunction: 'ease-out',
-          }}
-          style={{
-            left: ripple.x,
-            top: ripple.y,
-            transform: 'translate(-50%, -50%)',
-            width: '0px',
-            height: '0px',
-          }}
-        ></span>
-      ))}
     </button>
   );
 };

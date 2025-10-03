@@ -1,36 +1,35 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-export interface Toast {
-  id: string;
-  message: string;
-  type: 'success' | 'error' | 'warning' | 'info';
-  duration?: number; // in milliseconds, 0 for indefinite
-}
-
-interface ToastState {
-  toasts: Toast[];
+export interface ToastState {
+  message: string | null;
+  type: 'success' | 'error' | 'info' | 'warning' | null;
+  id: string | null;
 }
 
 const initialState: ToastState = {
-  toasts: [],
+  message: null,
+  type: null,
+  id: null,
 };
 
 const toastSlice = createSlice({
   name: 'toast',
   initialState,
   reducers: {
-    addToast: (state, action: PayloadAction<Omit<Toast, 'id'> & { id?: string }>) => {
-      const newToast: Toast = {
-        id: action.payload.id || Math.random().toString(36).substring(2, 9),
-        ...action.payload,
-      };
-      state.toasts.push(newToast);
+    showToast: (state, action: PayloadAction<{ message: string; type: 'success' | 'error' | 'info' | 'warning' }>)
+     => {
+      state.message = action.payload.message;
+      state.type = action.payload.type;
+      state.id = Date.now().toString(); // Unique ID for each toast
     },
-    removeToast: (state, action: PayloadAction<string>) => {
-      state.toasts = state.toasts.filter((toast) => toast.id !== action.payload);
+    clearToast: (state) => {
+      state.message = null;
+      state.type = null;
+      state.id = null;
     },
   },
 });
 
-export const { addToast, removeToast } = toastSlice.actions;
+export const { showToast, clearToast } = toastSlice.actions;
+
 export default toastSlice.reducer;

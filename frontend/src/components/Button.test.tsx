@@ -1,42 +1,31 @@
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { render, screen, fireEvent } from '@testing-library/react';
 import Button from './Button';
-import { describe, it, expect, vi } from 'vitest'; // Using Vitest for now, assuming it's available or will be set up
 
 describe('Button', () => {
-  it('renders with primary variant and default size', () => {
-    render(<Button label="Click Me" />);
-    const button = screen.getByRole('button', { name: /click me/i });
+  it('renders with default primary variant', () => {
+    render(<Button label="Test Button" />);
+    const button = screen.getByRole('button', { name: /test button/i });
     expect(button).toBeInTheDocument();
     expect(button).toHaveClass('bg-primary');
-    expect(button).toHaveClass('text-white');
-    expect(button).toHaveClass('px-4');
-    expect(button).toHaveClass('py-2');
   });
 
-  it('renders with secondary variant and custom size', () => {
-    render(
-      <Button label="View Details" variant="secondary" size={{ width: 100, height: 40 }} />
-    );
-    const button = screen.getByRole('button', { name: /view details/i });
-    expect(button).toBeInTheDocument();
+  it('renders with secondary variant', () => {
+    render(<Button label="Test Button" variant="secondary" />);
+    const button = screen.getByRole('button', { name: /test button/i });
     expect(button).toHaveClass('bg-secondary');
-    expect(button).toHaveClass('text-white');
-    expect(button).toHaveClass('w-[100px]');
-    expect(button).toHaveClass('h-[40px]');
   });
 
-  it('calls onClick handler when clicked', async () => {
-    const handleClick = vi.fn();
-    render(<Button label="Submit" onClick={handleClick} />);
-    const button = screen.getByRole('button', { name: /submit/i });
-    await userEvent.click(button);
+  it('calls onClick handler when clicked', () => {
+    const handleClick = jest.fn();
+    render(<Button label="Test Button" onClick={handleClick} />);
+    fireEvent.click(screen.getByRole('button', { name: /test button/i }));
     expect(handleClick).toHaveBeenCalledTimes(1);
   });
 
-  it('applies additional className', () => {
-    render(<Button label="Custom" className="custom-class" />);
-    const button = screen.getByRole('button', { name: /custom/i });
-    expect(button).toHaveClass('custom-class');
+  it('applies custom size styles', () => {
+    render(<Button label="Test Button" size={{ width: 100, height: 50 }} />);
+    const button = screen.getByRole('button', { name: /test button/i });
+    expect(button).toHaveStyle('width: 100px');
+    expect(button).toHaveStyle('height: 50px');
   });
 });
