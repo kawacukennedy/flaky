@@ -1,12 +1,46 @@
 // Purpose: Charts, tables, analytics overview
 
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import LineChartComponent from '../components/LineChartComponent';
 import PieChartComponent from '../components/PieChartComponent';
 import TableComponent from '../components/TableComponent';
+import useWebSocket from '../hooks/useWebSocket';
+import { RootState, AppDispatch } from '../app/store';
+import { addTest, updateExistingTest, removeTest, fetchTests } from '../app/slices/testsSlice';
 
 const DashboardPage: React.FC = () => {
-  // Dummy data for charts and table
+  const dispatch = useDispatch<AppDispatch>();
+  const tests = useSelector((state: RootState) => state.tests.tests);
+  const testsStatus = useSelector((state: RootState) => state.tests.status);
+
+  useEffect(() => {
+    if (testsStatus === 'idle') {
+      dispatch(fetchTests());
+    }
+  }, [testsStatus, dispatch]);
+
+  const handleWebSocketMessage = (event: MessageEvent) => {
+    const message = JSON.parse(event.data);
+    console.log('WebSocket message received:', message);
+    switch (message.type) {
+      case 'new_test':
+        dispatch(addTest(message.data));
+        break;
+      case 'update_test':
+        dispatch(updateExistingTest(message.data));
+        break;
+      case 'delete_test':
+        dispatch(removeTest(message.data.id));
+        break;
+      default:
+        console.log('Unknown message type:', message.type);
+    }
+  };
+
+  useWebSocket('ws://localhost:8000/ws/dashboard', { onMessage: handleWebSocketMessage });
+
+  // Dummy data for charts and table (will be replaced by real data from Redux store)
   const lineChartData = {
     labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
     datasets: [
@@ -42,18 +76,11 @@ const DashboardPage: React.FC = () => {
     ],
   };
 
-  const tableData = [
-    { id: 1, name: 'test_login_failure', project: 'AuthService', status: 'Flaky', last_seen: '2023-10-26' },
-    { id: 2, name: 'test_data_race', project: 'UserService', status: 'Flaky', last_seen: '2023-10-25' },
-    { id: 3, name: 'test_api_timeout', project: 'PaymentService', status: 'Flaky', last_seen: '2023-10-24' },
-  ];
-
   const tableColumns = [
     { key: 'id', header: 'ID' },
     { key: 'name', header: 'Test Name' },
-    { key: 'project', header: 'Project' },
-    { key: 'status', header: 'Status' },
-    { key: 'last_seen', header: 'Last Seen' },
+    { key: 'project_id', header: 'Project ID' },
+    // Add more columns as needed
   ];
 
   return (
@@ -72,8 +99,8 @@ const DashboardPage: React.FC = () => {
       </div>
 
       <div className="bg-white p-4 rounded-lg shadow">
-        <h2 className="text-xl font-semibold mb-4">Recent Flaky Tests</h2>
-        <TableComponent data={tableData} columns={tableColumns} />
+        <h2 className="text-xl font-semibold mb-4">All Tests (Real-time)</h2>
+        <TableComponent data={tests} columns={tableColumns} />
       </div>
     </div>
   );

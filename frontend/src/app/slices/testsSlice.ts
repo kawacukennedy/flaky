@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import api from '../../app/services/api';
 
 interface Test {
@@ -42,7 +42,20 @@ export const deleteTest = createAsyncThunk('tests/deleteTest', async (testId: nu
 const testsSlice = createSlice({
   name: 'tests',
   initialState,
-  reducers: {},
+  reducers: {
+    addTest: (state, action: PayloadAction<Test>) => {
+      state.tests.push(action.payload);
+    },
+    updateExistingTest: (state, action: PayloadAction<Test>) => {
+      const index = state.tests.findIndex(test => test.id === action.payload.id);
+      if (index !== -1) {
+        state.tests[index] = action.payload;
+      }
+    },
+    removeTest: (state, action: PayloadAction<number>) => {
+      state.tests = state.tests.filter(test => test.id !== action.payload);
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchTests.pending, (state) => {
@@ -57,18 +70,22 @@ const testsSlice = createSlice({
         state.error = action.error.message || 'Failed to fetch tests';
       })
       .addCase(createTest.fulfilled, (state, action) => {
-        state.tests.push(action.payload);
+        // This is handled by WebSocket now, but keeping for direct API calls if any
+        // state.tests.push(action.payload);
       })
       .addCase(updateTest.fulfilled, (state, action) => {
-        const index = state.tests.findIndex(test => test.id === action.payload.id);
-        if (index !== -1) {
-          state.tests[index] = action.payload;
-        }
+        // This is handled by WebSocket now
+        // const index = state.tests.findIndex(test => test.id === action.payload.id);
+        // if (index !== -1) {
+        //   state.tests[index] = action.payload;
+        // }
       })
       .addCase(deleteTest.fulfilled, (state, action) => {
-        state.tests = state.tests.filter(test => test.id !== action.payload);
+        // This is handled by WebSocket now
+        // state.tests = state.tests.filter(test => test.id !== action.payload);
       });
   },
 });
 
+export const { addTest, updateExistingTest, removeTest } = testsSlice.actions;
 export default testsSlice.reducer;
