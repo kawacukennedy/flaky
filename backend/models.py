@@ -13,6 +13,7 @@ class Test(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String, index=True)
     project_id = Column(Integer, ForeignKey('projects.id'))
+    status = Column(String, default="unknown") # Added status field
     flaky_occurrences = relationship('FlakyOccurrence', back_populates='test')
     project = relationship('Project', back_populates='tests')
 

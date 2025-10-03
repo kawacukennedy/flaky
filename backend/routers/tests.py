@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from .. import crud, schemas, models
 from ..database import SessionLocal
@@ -15,8 +15,28 @@ def get_db():
         db.close()
 
 @router.get("/", response_model=list[schemas.TestResponse])
-def read_tests(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    tests = crud.TestCRUD.list(db, skip=skip, limit=limit)
+def read_tests(
+    skip: int = 0,
+    limit: int = 100,
+    search: str | None = Query(None, description="Search term for test names"),
+    status: str | None = Query(None, description="Filter by test status"),
+    project: str | None = Query(None, description="Filter by project name"),
+    db: Session = Depends(get_db)
+):
+    query = db.query(models.Test)
+
+    if search:
+        query = query.filter(models.Test.name.ilike(f"%{search}%"))
+
+    if status:
+        # Assuming Test model has a 'status' field or can be joined with FlakyOccurrence
+        # For now, let's assume a direct status field on Test for simplicity
+        query = query.filter(models.Test.status == status) # This field needs to be added to models.py
+
+    if project:
+        query = query.join(models.Project).filter(models.Project.name.ilike(f"%{project}%"))
+
+    tests = query.offset(skip).limit(limit).all()
     return tests
 
 @router.post("/", response_model=schemas.TestResponse)
