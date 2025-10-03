@@ -5,14 +5,31 @@ import LineChartComponent from '../components/LineChartComponent';
 
 const API_URL = 'http://127.0.0.1:8000';
 
+interface RunHistory {
+  run_id: string;
+  status: string;
+  duration_ms: number;
+  timestamp: string;
+  stacktrace?: string;
+}
+
+interface TestDetail {
+  test_id: string;
+  framework: string;
+  flakiness_score: number;
+  root_cause: string;
+  suggested_fix: string;
+  history: RunHistory[];
+}
+
 function TestDetailPage() {
-  const { id } = useParams();
-  const [testData, setTestData] = useState(null);
+  const { id } = useParams<{ id: string }>();
+  const [testData, setTestData] = useState<TestDetail | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${API_URL}/tests/${id}`);
+        const response = await axios.get<TestDetail>(`${API_URL}/tests/${id}`);
         setTestData(response.data);
       } catch (error) {
         console.error(`Error fetching data for test ${id}:`, error);

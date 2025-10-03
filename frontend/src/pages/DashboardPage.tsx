@@ -52,7 +52,7 @@ function DashboardPage() {
           <div className="md:col-span-2 bg-white p-6 rounded-lg shadow">
             <h3 className="text-lg font-medium text-gray-900">Flakiness Trend</h3>
             <div className="h-64">
-              <LineChartComponent />
+              <LineChartComponent data={[]} />
             </div>
           </div>
           <div className="bg-white p-6 rounded-lg shadow">

@@ -1,6 +1,17 @@
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
-const LineChartComponent = ({ data }) => {
+interface RunHistory {
+  run_id: string;
+  status: string;
+  duration_ms: number;
+  timestamp: string;
+}
+
+interface LineChartComponentProps {
+  data: RunHistory[];
+}
+
+const LineChartComponent = ({ data }: LineChartComponentProps) => {
   const chartData = data.map(run => ({
     ...run,
     // Convert timestamp to a more readable format for the tooltip if needed

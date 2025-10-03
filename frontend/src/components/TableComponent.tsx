@@ -5,11 +5,15 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 
-type FlakyTest = {
+interface FlakyTest {
   test_id: string;
   flakiness_score: number;
   root_cause: string;
-};
+}
+
+interface TableComponentProps {
+  data: FlakyTest[];
+}
 
 const columnHelper = createColumnHelper<FlakyTest>();
 
@@ -28,7 +32,7 @@ const columns = [
   }),
 ];
 
-const TableComponent = ({ data }) => {
+const TableComponent = ({ data }: TableComponentProps) => {
   const table = useReactTable({
     data,
     columns,
