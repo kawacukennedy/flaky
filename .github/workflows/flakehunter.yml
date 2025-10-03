@@ -1,0 +1,36 @@
+name: FlakeHunter CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  run-flakehunter:
+    name: Run FlakeHunter
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: |
+          pip install -r backend/requirements.txt
+          pip install requests
+      - name: Run tests with FlakeHunter
+        run: backend/venv/bin/pytest --flakehunter --repeat=20 tests/
+      - name: Upload results
+        run: |
+          # In a real scenario, you would have a dedicated script to upload reports
+          # This is a simplified example that just lists the files
+          ls -R flakehunter_reports
+      - name: Post PR Comment
+        if: failure() && github.event_name == 'pull_request'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_PR_NUMBER: ${{ github.event.number }}
+        run: python scripts/post_pr_comment.py
