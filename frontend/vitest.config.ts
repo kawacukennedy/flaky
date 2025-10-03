@@ -7,11 +7,10 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     setupFiles: './src/setupTests.ts',
-  },
-  resolve: {
-    alias: {
-      'react': 'react',
-      'react-dom': 'react-dom',
+    environmentOptions: {
+      jsdom: {
+        url: 'http://localhost',
+      },
     },
   },
 });

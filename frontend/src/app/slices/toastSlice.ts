@@ -16,8 +16,7 @@ const toastSlice = createSlice({
   name: 'toast',
   initialState,
   reducers: {
-    showToast: (state, action: PayloadAction<{ message: string; type: 'success' | 'error' | 'info' | 'warning' }>)
-     => {
+    showToast: (state, action: PayloadAction<{ message: string; type: 'success' | 'error' | 'info' | 'warning' }>) => {
       state.message = action.payload.message;
       state.type = action.payload.type;
       state.id = Date.now().toString(); // Unique ID for each toast
