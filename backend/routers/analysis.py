@@ -4,9 +4,9 @@ from .. import schemas, models
 from ..database import SessionLocal
 from ..ml_scorer import FlakinessPredictor
 from ..root_cause_engine import RootCauseEngine
-import pandas as pd
+import uuid
 
-router = APIRouter()
+router = APIRouter(prefix="/analysis", tags=["analysis"])
 
 def get_db():
     db = SessionLocal()
@@ -15,22 +15,36 @@ def get_db():
     finally:
         db.close()
 
-@router.post("/predict")
-def predict_flakiness(execution_data: dict):
-    # In a real scenario, execution_data would be a Pydantic model
-    # and would be preprocessed into a DataFrame for the ML model.
-    # For now, a placeholder.
+@router.post("/predict", response_model=schemas.AnalysisPredictResponse)
+def predict_flakiness(payload: schemas.AnalysisPredictPayload, db: Session = Depends(get_db)):
     predictor = FlakinessPredictor()
-    # Example: X = pd.DataFrame([execution_data])
-    # prediction = predictor.predict(X)
-    return {"prediction": "flaky"} # Placeholder
+    # Process execution_data
+    # For simplicity, take first item
+    data = payload.execution_data[0] if payload.execution_data else {}
+    features = {
+        'num_failures': data.get('num_failures', 0),
+        'num_runs': data.get('num_runs', 1),
+        'duration': data.get('duration', 0)
+    }
+    score = predictor.predict_flakiness(features)
+    return {
+        "test_id": data.get('test_id', str(uuid.uuid4())),
+        "flakiness_score": score,
+        "probability": score,  # dummy
+        "features_used": list(features.keys())
+    }
 
-@router.get("/root_cause/{test_id}")
-def get_root_cause(test_id: int, db: Session = Depends(get_db)):
-    test_occurrences = db.query(models.FlakyOccurrence).filter(models.FlakyOccurrence.test_id == test_id).all()
-    if not test_occurrences:
-        raise HTTPException(status_code=404, detail="No flaky occurrences found for this test")
+@router.get("/root_cause/{test_id}", response_model=schemas.RootCauseResponse)
+def get_root_cause(test_id: str, db: Session = Depends(get_db)):
+    try:
+        test_uuid = uuid.UUID(test_id)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid test_id")
+
+    test = db.query(models.Test).filter(models.Test.id == test_uuid).first()
+    if not test:
+        raise HTTPException(status_code=404, detail="Test not found")
 
     engine = RootCauseEngine()
-    causes = engine.analyze(test_occurrences)
-    return {"test_id": test_id, "root_causes": causes} # Placeholder
+    causes = engine.analyze_flakiness(test_id, db)
+    return {"test_id": test_id, "root_causes": causes}

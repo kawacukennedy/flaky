@@ -8,15 +8,16 @@ import TableComponent from '../components/TableComponent';
 import SearchBar from '../components/SearchBar';
 import SearchFilter from '../components/SearchFilter';
 import useWebSocket from '../hooks/useWebSocket';
-import { RootState, AppDispatch } from '../app/store';
-import { addTest, updateExistingTest, removeTest, fetchTests, fetchFilteredTests, setSearchTerm, setFilter, clearFilters } from '../app/slices/testsSlice';
+import type { RootState, AppDispatch } from '../app/store';
+import { fetchDashboardSummary } from '../app/slices/dashboardSummarySlice';
+import { fetchFilteredTests, applyFilters, sortTests, setSelectedTestId } from '../app/slices/testsListSlice';
+import { setQuery, setAppliedFilters } from '../app/slices/filtersSlice';
 
 const DashboardPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const tests = useSelector((state: RootState) => state.tests.tests);
-  const testsStatus = useSelector((state: RootState) => state.tests.status);
-  const searchTerm = useSelector((state: RootState) => state.tests.searchTerm);
-  const filters = useSelector((state: RootState) => state.tests.filters);
+  const dashboardSummary = useSelector((state: RootState) => state.dashboardSummary);
+  const testsList = useSelector((state: RootState) => state.testsList);
+  const filters = useSelector((state: RootState) => state.filters);
 
   const filterOptions = {
     status: ['flaky', 'stable', 'passed', 'failed'],
@@ -24,30 +25,21 @@ const DashboardPage: React.FC = () => {
     // Add more filter options as needed
   };
 
-  const applyFilters = useCallback(() => {
-    dispatch(fetchFilteredTests({ query: searchTerm, filters }));
-  }, [dispatch, searchTerm, filters]);
-
   useEffect(() => {
-    if (testsStatus === 'idle') {
-      dispatch(fetchTests());
-    }
-  }, [testsStatus, dispatch]);
-
-  useEffect(() => {
-    applyFilters();
-  }, [searchTerm, filters, applyFilters]);
+    dispatch(fetchDashboardSummary());
+    dispatch(fetchFilteredTests({ query: filters.query, filters: filters.appliedFilters }));
+  }, [dispatch, filters.query, filters.appliedFilters]);
 
   const handleSearchChange = (term: string) => {
-    dispatch(setSearchTerm(term));
+    dispatch(setQuery(term));
   };
 
   const handleFilterChange = (key: string, value: string) => {
-    dispatch(setFilter({ key, value }));
+    dispatch(setAppliedFilters({ ...filters.appliedFilters, [key]: value }));
   };
 
   const handleClearFilters = () => {
-    dispatch(clearFilters());
+    dispatch(setAppliedFilters({}));
   };
 
   const handleWebSocketMessage = (event: MessageEvent) => {
