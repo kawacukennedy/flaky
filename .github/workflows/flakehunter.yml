@@ -1,4 +1,4 @@
-name: FlakeHunter CI
+name: FlakeHunter CI/CD
 
 on:
   push:
@@ -11,7 +11,15 @@ jobs:
     name: Build and Test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Verify branch
+        run: |
+          if [[ "${{ github.ref }}" != "refs/heads/main" && "${{ github.event_name }}" != "pull_request" ]]; then
+            echo "Workflow only runs on main branch or PRs"
+            exit 1
+          fi
 
       - name: Set up Python 3.13
         uses: actions/setup-python@v4
@@ -19,30 +27,33 @@ jobs:
           python-version: '3.13'
 
       - name: Set up Node.js 20
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
 
       - name: Install backend dependencies
         run: |
-          python -m venv backend/venv
-          source backend/venv/bin/activate
-          pip install -r backend/requirements.txt
+          cd backend
+          python -m venv venv
+          source venv/bin/activate
+          pip install -r requirements.txt
 
       - name: Install frontend dependencies
         run: |
           cd frontend
           npm install
 
-      - name: Run backend unit tests
+      - name: Run backend unit tests with coverage
         run: |
-          source backend/venv/bin/activate
-          pytest backend/tests/
+          cd backend
+          source venv/bin/activate
+          pip install pytest-cov
+          pytest --cov=. --cov-report=xml --cov-fail-under=90
 
       - name: Run frontend unit tests
         run: |
           cd frontend
-          npm test
+          npm run test:unit
 
       - name: Run frontend e2e tests
         run: |
@@ -55,39 +66,73 @@ jobs:
           cd frontend
           npm run build
 
-      - name: Deploy to Staging (Placeholder)
-        if: github.ref == 'refs/heads/main'
-        run: echo "Deploying to staging environment..."
+      - name: Store build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-build
+          path: frontend/dist/
 
-      - name: Notify developers (Placeholder)
-        if: always()
-        run: echo "CI/CD pipeline completed. Check logs for details."
-
-  run-flakehunter-plugins:
-    name: Run FlakeHunter Plugins
+  deploy-staging:
+    name: Deploy to Staging
     runs-on: ubuntu-latest
     needs: build-and-test
+    if: github.ref == 'refs/heads/main'
     steps:
-      - uses: actions/checkout@v3
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
         with:
-          python-version: '3.11'
-      - name: Install dependencies
+          name: frontend-build
+          path: frontend/dist/
+
+      - name: Deploy backend to staging
         run: |
-          pip install -r backend/requirements.txt
-          pip install requests
-      - name: Run tests with FlakeHunter Pytest Plugin
-        run: backend/venv/bin/pytest --flakehunter --repeat=20 tests/
-      - name: Upload results
+          # Placeholder for backend deployment
+          echo "Deploying backend to staging..."
+
+      - name: Deploy frontend to staging
         run: |
-          # In a real scenario, you would have a dedicated script to upload reports
-          # This is a simplified example that just lists the files
-          ls -R flakehunter_reports
-      - name: Post PR Comment
-        if: failure() && github.event_name == 'pull_request'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_REPOSITORY: ${{ github.repository }}
-          GITHUB_PR_NUMBER: ${{ github.event.number }}
-        run: python scripts/post_pr_comment.py
+          # Placeholder for frontend deployment
+          echo "Deploying frontend to staging..."
+
+      - name: Verify health checks
+        run: |
+          # Placeholder for health checks
+          echo "Running health checks..."
+          # curl -f http://staging-api/health || exit 1
+          # curl -f http://staging-frontend/health || exit 1
+
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: deploy-staging
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Deploy to production
+        run: |
+          # Placeholder for production deployment
+          echo "Deploying to production..."
+
+      - name: Verify production health
+        run: |
+          # Placeholder for production health checks
+          echo "Verifying production deployment..."
+          # Add rollback logic on failure
+
+  notify:
+    name: Notify and Monitor
+    runs-on: ubuntu-latest
+    needs: [build-and-test, deploy-staging, deploy-production]
+    if: always()
+    steps:
+      - name: Notify via Slack
+        run: |
+          # Placeholder for Slack notification
+          echo "Sending Slack notification..."
+
+      - name: Monitor runtime errors
+        run: |
+          # Placeholder for error monitoring
+          echo "Monitoring runtime errors..."

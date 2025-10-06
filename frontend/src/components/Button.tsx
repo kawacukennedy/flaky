@@ -1,7 +1,7 @@
-import React, { ButtonHTMLAttributes } from 'react';
+import React from 'react';
 import clsx from 'clsx';
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   label: string;
   variant?: 'primary' | 'secondary' | 'danger' | 'success' | 'warning' | 'info' | 'muted';
   size?: { width?: number; height?: number };
@@ -16,7 +16,7 @@ const Button: React.FC<ButtonProps> = ({
   className,
   ...props
 }) => {
-  const baseStyles = 'inline-flex items-center justify-center font-medium rounded-md transition-all duration-fast ease-standard';
+  const baseStyles = 'inline-flex items-center justify-center font-medium rounded-xl hover:shadow-lg transition-all duration-fast ease-standard';
 
   const variantStyles = {
     primary: 'bg-primary text-white hover:bg-primary_hover shadow-sm',

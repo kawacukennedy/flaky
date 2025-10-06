@@ -13,7 +13,7 @@ const Input: React.FC<InputProps> = ({
   className,
   ...props
 }) => {
-  const baseStyles = 'block w-full px-3 py-2 rounded-md border transition-all duration-200 ease-standard';
+  const baseStyles = 'block w-full px-3 py-2 rounded-md border focus:ring-2 focus:ring-primary transition-all duration-200 ease-standard';
   const focusStyles = 'focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent';
   const errorStyles = error ? 'border-danger animate-shake animation-duration-150' : 'border-border dark:border-surface_dark';
 
