@@ -91,3 +91,18 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db:
 @router.get("/me", response_model=schemas.UserResponse)
 def read_users_me(current_user: models.User = Depends(get_current_user)):
     return current_user
+
+@router.put("/{user_id}", response_model=schemas.UserResponse)
+def update_user(user_id: str, user_update: schemas.UserCreate, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
+    if str(current_user.id) != user_id:
+        raise HTTPException(status_code=403, detail="Not authorized to update this user")
+    db_user = db.query(models.User).filter(models.User.id == user_id).first()
+    if not db_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    for key, value in user_update.dict(exclude_unset=True).items():
+        if key == "password":
+            value = get_password_hash(value)
+        setattr(db_user, key, value)
+    db.commit()
+    db.refresh(db_user)
+    return db_user
