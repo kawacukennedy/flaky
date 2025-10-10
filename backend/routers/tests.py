@@ -97,3 +97,30 @@ def get_tests_summary(db: Session = Depends(get_db)):
         "flakyTests": flaky_tests,
         "averageFlakiness": average_flakiness
     }
+
+@router.get("/search")
+def search_tests(
+    q: str = "",
+    status: str = None,
+    environment: str = None,
+    project: str = None,
+    skip: int = 0,
+    limit: int = 100,
+    db: Session = Depends(get_db)
+):
+    query = db.query(models.Test)
+
+    if q:
+        query = query.filter(models.Test.name.ilike(f"%{q}%"))
+
+    if status:
+        query = query.filter(models.Test.status == status)
+
+    if environment:
+        query = query.filter(models.Test.environment.ilike(f"%{environment}%"))
+
+    if project:
+        query = query.join(models.Project).filter(models.Project.name.ilike(f"%{project}%"))
+
+    tests = query.offset(skip).limit(limit).all()
+    return [schemas.TestResponse.from_orm(test) for test in tests]

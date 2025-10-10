@@ -7,6 +7,7 @@ import TestDetailPage from "./pages/TestDetailPage";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import SearchPage from "./pages/SearchPage";
+import SolutionsPage from "./pages/SolutionsPage";
 import { ThemeProvider } from "./ThemeInitializer";
 import GlobalToast from "./components/layout/GlobalToast";
 import LeftNav from "./components/layout/LeftNav";
@@ -29,6 +30,7 @@ function App() {
                 <Route path="/settings" element={<SettingsPage />} />
                 <Route path="/tests/:test_id" element={<TestDetailPage />} />
                 <Route path="/search" element={<SearchPage />} />
+                <Route path="/solutions" element={<SolutionsPage />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/signup" element={<SignupPage />} />
               </Routes>

@@ -3,52 +3,45 @@ import { Search } from "lucide-react";
 import SearchFilter from "./SearchFilter";
 
 interface SearchBarProps {
-  onSearch: (query: string, filters: Record<string, string>) => void;
+  onSearch: (query: string) => void;
+  onFilterChange: (filterName: string, value: string) => void;
+  currentFilters: Record<string, string>;
 }
 
-const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
+const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onFilterChange, currentFilters }) => {
   const [query, setQuery] = useState("");
-  const [activeFilters, setActiveFilters] = useState<Record<string, string>>({
-    Source: "All",
-    Date: "7d",
-    Sort: "Relevance",
-  });
   const [isFocused, setIsFocused] = useState(false);
-  const [isError, setIsError] = useState(false); // For micro-interaction
 
   const filtersConfig = [
     {
-      label: "Source",
-      options: ["All", "CI Logs", "GitHub", "Docs"],
-      defaultValue: "All",
+      label: "status",
+      options: ["", "pass", "fail", "skipped"],
+      defaultValue: "",
     },
     {
-      label: "Date",
-      options: ["24h", "7d", "30d", "All Time"],
-      defaultValue: "7d",
+      label: "environment",
+      options: ["", "local", "ci", "staging"],
+      defaultValue: "",
     },
     {
-      label: "Sort",
-      options: ["Relevance", "Most Recent"],
-      defaultValue: "Relevance",
+      label: "project",
+      options: ["", "project1", "project2"], // dummy
+      defaultValue: "",
     },
   ];
 
   useEffect(() => {
     const handler = setTimeout(() => {
-      onSearch(query, activeFilters);
-    }, 300); // Debounce_ms: 300
+      onSearch(query);
+    }, 300);
 
     return () => {
       clearTimeout(handler);
     };
-  }, [query, activeFilters, onSearch]);
+  }, [query, onSearch]);
 
   const handleFilterChange = (filterName: string, value: string) => {
-    setActiveFilters((prev) => ({
-      ...prev,
-      [filterName]: value,
-    }));
+    onFilterChange(filterName, value);
   };
 
   return (
@@ -74,7 +67,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
             key={filter.label}
             label={filter.label}
             options={filter.options}
-            defaultValue={filter.defaultValue}
+            defaultValue={currentFilters[filter.label] || filter.defaultValue}
             onChange={(value) => handleFilterChange(filter.label, value)}
           />
         ))}

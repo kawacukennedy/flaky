@@ -3,9 +3,10 @@ import { Frown } from "lucide-react";
 
 interface SearchResultItem {
   id: string;
-  title: string;
-  description: string;
-  link: string;
+  name: string;
+  status: string;
+  flakiness_score: number;
+  timestamp: string;
 }
 
 interface EmptyStateCardProps {
@@ -85,13 +86,15 @@ const SearchResults: React.FC<SearchResultsProps> = ({
       {results.map((item) => (
         <a
           key={item.id}
-          href={item.link}
+          href={`/tests/${item.id}`}
           className="block p-4 rounded-md shadow-sm bg-surface_light dark:bg-surface_dark hover:lift hover:shadow-md transition-all duration-normal"
         >
           <h3 className="text-lg font-semibold text-text_light dark:text-text_dark mb-1">
-            {item.title}
+            {item.name}
           </h3>
-          <p className="text-muted text-sm">{item.description}</p>
+          <p className="text-muted text-sm">
+            Status: {item.status} | Flakiness: {item.flakiness_score.toFixed(2)} | {new Date(item.timestamp).toLocaleDateString()}
+          </p>
         </a>
       ))}
     </div>
