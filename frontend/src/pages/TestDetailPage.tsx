@@ -31,7 +31,7 @@ const TestDetailPage: React.FC = () => {
     setActiveTab(tab);
     if (test_id) {
       if (tab === 'logs' && !testLogs) {
-        dispatch(fetchTestLogs(test_id));
+        dispatch(fetchTestLogs({ testId: test_id }));
       } else if (tab === 'root_cause' && rootCauseAnalysis.length === 0) {
         dispatch(fetchRootCause(test_id));
       }
@@ -87,7 +87,7 @@ const TestDetailPage: React.FC = () => {
             </DetailsPanel>
           )}
           {activeTab === 'logs' && testLogs && (
-            <LogsViewer logs={testLogs.logs} testId={test_id} hasMore={testLogs.has_more} loading={logsLoading} />
+            <LogsViewer logs={testLogs.logs} testId={test_id || ''} hasMore={testLogs.has_more} loading={logsLoading} />
           )}
            {activeTab === 'root_cause' && (
              <DetailsPanel title="Root Cause Analysis">

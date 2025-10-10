@@ -34,7 +34,7 @@ const SearchPage: React.FC = () => {
           onFilterChange={handleFilterChange}
           currentFilters={filters}
         />
-        <SearchResults results={testsList.data} loading={testsList.loading} searchTerm={searchTerm} />
+        <SearchResults results={testsList.data || []} loading={testsList.loading} />
       </div>
     </div>
   );

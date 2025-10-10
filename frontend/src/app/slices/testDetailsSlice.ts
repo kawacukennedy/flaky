@@ -7,6 +7,7 @@ interface TestDetails {
   status: string;
   duration: number;
   environment: string;
+  project_id: string;
   flakiness_score: number;
   timestamp: string;
 }

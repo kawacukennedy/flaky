@@ -48,14 +48,14 @@ const SkeletonShimmer: React.FC = () => {
 
 interface SearchResultsProps {
   results: SearchResultItem[];
-  isLoading: boolean;
+  loading: boolean;
 }
 
 const SearchResults: React.FC<SearchResultsProps> = ({
   results,
-  isLoading,
+  loading,
 }) => {
-  if (isLoading) {
+  if (loading) {
     return (
       <div className="space-y-4">
         <div className="bg-surface_light dark:bg-surface_dark p-4 rounded-md shadow-sm">

@@ -51,6 +51,31 @@ const DashboardPage: React.FC = () => {
     dispatch(setAppliedFilters({}));
   };
 
+  const handleExportCSV = () => {
+    if (!testsList.data.length) return;
+
+    const headers = ["Name", "Status", "Flakiness Score", "Duration", "Environment", "Timestamp"];
+    const csvContent = [
+      headers.join(","),
+      ...testsList.data.map(test => [
+        test.name,
+        test.status,
+        test.flakiness_score,
+        test.duration || "",
+        test.environment || "",
+        test.timestamp
+      ].join(","))
+    ].join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "tests.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   const handleTableRowClick = (testId: string) => {
     dispatch(setSelectedTestId(testId));
     navigate(`/tests/${testId}`);
@@ -181,7 +206,10 @@ const DashboardPage: React.FC = () => {
       </div>
 
       <div className="bg-white p-4 rounded-2xl shadow-md">
-        <h2 className="text-xl font-semibold mb-4">All Tests</h2>
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-semibold">All Tests</h2>
+          <Button onClick={handleExportCSV}>Export to CSV</Button>
+        </div>
         <TableComponent
           data={testsList.data}
           columns={tableColumns}
