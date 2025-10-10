@@ -2,18 +2,15 @@ import React from 'react';
 import clsx from 'clsx';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  label: string;
-  variant?: 'primary' | 'secondary' | 'danger' | 'success' | 'warning' | 'info' | 'muted';
+  variant?: 'primary' | 'secondary';
   size?: { width?: number; height?: number };
-  onClick?: () => void;
 }
 
 const Button: React.FC<ButtonProps> = ({
-  label,
   variant = 'primary',
   size,
-  onClick,
   className,
+  children,
   ...props
 }) => {
   const baseStyles = 'inline-flex items-center justify-center font-medium rounded-xl hover:shadow-lg transition-all duration-fast ease-standard';
@@ -32,39 +29,13 @@ const Button: React.FC<ButtonProps> = ({
     ? { width: size.width ? `${size.width}px` : 'auto', height: size.height ? `${size.height}px` : 'auto' }
     : 'px-4 py-2';
 
-  // Ripple effect (simplified for now, full implementation might require a separate hook/component)
-  const handleRipple = (event: React.MouseEvent<HTMLButtonElement>) => {
-    const button = event.currentTarget;
-    const circle = document.createElement('span');
-    const diameter = Math.max(button.clientWidth, button.clientHeight);
-    const radius = diameter / 2;
-
-    circle.style.width = circle.style.height = `${diameter}px`;
-    circle.style.left = `${event.clientX - button.offsetLeft - radius}px`;
-    circle.style.top = `${event.clientY - button.offsetTop - radius}px`;
-    circle.classList.add('ripple');
-
-    const ripple = button.getElementsByClassName('ripple')[0];
-
-    if (ripple) {
-      ripple.remove();
-    }
-
-    button.appendChild(circle);
-
-    if (onClick) {
-      onClick();
-    }
-  };
-
   return (
     <button
-      className={clsx(baseStyles, variantStyles[variant], className, 'relative overflow-hidden')}
+      className={clsx(baseStyles, variantStyles[variant], className)}
       style={typeof sizeStyles === 'object' ? sizeStyles : undefined}
-      onClick={handleRipple}
       {...props}
     >
-      {label}
+      {children}
     </button>
   );
 };

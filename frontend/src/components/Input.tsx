@@ -2,15 +2,14 @@ import React, { InputHTMLAttributes } from 'react';
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
-  id: string;
   error?: string;
 }
 
 const Input: React.FC<InputProps> = ({
   label,
-  id,
   error,
   className,
+  id,
   ...props
 }) => {
   const baseStyles = 'block w-full px-3 py-2 rounded-md border focus:ring-2 focus:ring-primary transition-all duration-200 ease-standard';
