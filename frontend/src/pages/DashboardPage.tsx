@@ -105,6 +105,27 @@ const DashboardPage: React.FC = () => {
     (test) => test.flakiness_score <= 0.5,
   );
 
+  const environmentStats = testsList.data.reduce((acc, test) => {
+    const env = test.environment || 'unknown';
+    if (!acc[env]) acc[env] = { total: 0, flaky: 0 };
+    acc[env].total++;
+    if (test.flakiness_score > 0.5) acc[env].flaky++;
+    return acc;
+  }, {} as Record<string, { total: number; flaky: number }>);
+
+  const environmentChartData = {
+    labels: Object.keys(environmentStats),
+    datasets: [
+      {
+        label: 'Tests by Environment',
+        data: Object.values(environmentStats).map(stat => stat.total),
+        backgroundColor: ['#4F46E5', '#6366F1', '#FACC15', '#EF4444'],
+        borderColor: ['#4F46E5', '#6366F1', '#FACC15', '#EF4444'],
+        borderWidth: 1,
+      },
+    ],
+  };
+
   // Handle empty datasets
   const pieChartData =
     testsList.data.length > 0
@@ -194,7 +215,7 @@ const DashboardPage: React.FC = () => {
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
         <div className="bg-white p-4 rounded-2xl shadow-md">
           <h2 className="text-xl font-semibold mb-4">Test Trends</h2>
           <LineChartComponent data={lineChartData} />
@@ -202,6 +223,10 @@ const DashboardPage: React.FC = () => {
         <div className="bg-white p-4 rounded-2xl shadow-md">
           <h2 className="text-xl font-semibold mb-4">Test Distribution</h2>
           <PieChartComponent data={pieChartData} />
+        </div>
+        <div className="bg-white p-4 rounded-2xl shadow-md">
+          <h2 className="text-xl font-semibold mb-4">Tests by Environment</h2>
+          <PieChartComponent data={environmentChartData} />
         </div>
       </div>
 
