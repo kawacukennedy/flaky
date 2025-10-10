@@ -1,5 +1,5 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
 
 interface User {
   id: string;
@@ -21,43 +21,52 @@ const initialState: UserState = {
 };
 
 export const login = createAsyncThunk(
-  'user/login',
-  async ({ username, password }: { username: string; password: string }, { rejectWithValue }) => {
+  "user/login",
+  async (
+    { username, password }: { username: string; password: string },
+    { rejectWithValue },
+  ) => {
     try {
-      const response = await axios.post('/users/login', new URLSearchParams({ username, password }));
+      const response = await axios.post(
+        "/users/login",
+        new URLSearchParams({ username, password }),
+      );
       return response.data;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data || 'Login failed');
+      return rejectWithValue(error.response?.data || "Login failed");
     }
-  }
+  },
 );
 
 export const signup = createAsyncThunk(
-  'user/signup',
-  async (userData: { username: string; email: string; password: string }, { rejectWithValue }) => {
+  "user/signup",
+  async (
+    userData: { username: string; email: string; password: string },
+    { rejectWithValue },
+  ) => {
     try {
-      const response = await axios.post('/users/signup', userData);
+      const response = await axios.post("/users/signup", userData);
       return response.data;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data || 'Signup failed');
+      return rejectWithValue(error.response?.data || "Signup failed");
     }
-  }
+  },
 );
 
 export const updateProfile = createAsyncThunk(
-  'user/updateProfile',
+  "user/updateProfile",
   async (userData: Partial<User>, { rejectWithValue }) => {
     try {
-      const response = await axios.put('/users/me', userData);
+      const response = await axios.put("/users/me", userData);
       return response.data;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data || 'Update failed');
+      return rejectWithValue(error.response?.data || "Update failed");
     }
-  }
+  },
 );
 
 const userSlice = createSlice({
-  name: 'user',
+  name: "user",
   initialState,
   reducers: {
     logout: (state) => {

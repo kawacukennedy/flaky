@@ -1,9 +1,9 @@
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { AppDispatch, RootState } from '../app/store';
-import { fetchFilteredTests } from '../app/slices/testsListSlice';
-import TableComponent from '../components/TableComponent';
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { AppDispatch, RootState } from "../app/store";
+import { fetchFilteredTests } from "../app/slices/testsListSlice";
+import TableComponent from "../components/TableComponent";
 
 const FlakesPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -11,24 +11,28 @@ const FlakesPage: React.FC = () => {
   const testsList = useSelector((state: RootState) => state.testsList);
 
   useEffect(() => {
-    dispatch(fetchFilteredTests({ query: '', filters: {} }));
+    dispatch(fetchFilteredTests({ query: "", filters: {} }));
   }, [dispatch]);
 
-  const flakyTests = testsList.data.filter(test => test.flakiness_score > 0.5);
+  const flakyTests = testsList.data.filter(
+    (test) => test.flakiness_score > 0.5,
+  );
 
   const handleTableRowClick = (testId: string) => {
     navigate(`/tests/${testId}`);
   };
 
   const tableColumns = [
-    { key: 'name', header: 'Test Name', sortable: true },
-    { key: 'status', header: 'Status', sortable: true },
-    { key: 'flakiness_score', header: 'Flakiness Score', sortable: true },
-    { key: 'timestamp', header: 'Last Run', sortable: true },
+    { key: "name", header: "Test Name", sortable: true },
+    { key: "status", header: "Status", sortable: true },
+    { key: "flakiness_score", header: "Flakiness Score", sortable: true },
+    { key: "timestamp", header: "Last Run", sortable: true },
   ];
 
   if (testsList.loading) {
-    return <div className="flex justify-center items-center h-64">Loading...</div>;
+    return (
+      <div className="flex justify-center items-center h-64">Loading...</div>
+    );
   }
 
   return (

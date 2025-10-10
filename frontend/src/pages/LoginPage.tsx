@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { AppDispatch, RootState } from '../app/store';
-import { login } from '../app/slices/userSlice';
-import Button from '../components/Button';
-import Input from '../components/Input';
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { AppDispatch, RootState } from "../app/store";
+import { login } from "../app/slices/userSlice";
+import Button from "../components/Button";
+import Input from "../components/Input";
 
 const LoginPage: React.FC = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const { loading, error } = useSelector((state: RootState) => state.user);
@@ -17,7 +17,7 @@ const LoginPage: React.FC = () => {
     e.preventDefault();
     const result = await dispatch(login({ username, password }));
     if (login.fulfilled.match(result)) {
-      navigate('/dashboard');
+      navigate("/dashboard");
     }
   };
 
@@ -46,11 +46,14 @@ const LoginPage: React.FC = () => {
           </div>
           {error && <p className="text-error mb-4">{error}</p>}
           <Button type="submit" disabled={loading} className="w-full">
-            {loading ? 'Logging in...' : 'Login'}
+            {loading ? "Logging in..." : "Login"}
           </Button>
         </form>
         <p className="text-center mt-4">
-          Don't have an account? <a href="/signup" className="text-primary">Sign up</a>
+          Don't have an account?{" "}
+          <a href="/signup" className="text-primary">
+            Sign up
+          </a>
         </p>
       </div>
     </div>

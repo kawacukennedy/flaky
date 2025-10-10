@@ -1,13 +1,13 @@
-import { configureStore } from '@reduxjs/toolkit';
-import testsReducer from './slices/testsSlice';
-import usersReducer from './slices/usersSlice';
-import toastReducer from './slices/toastSlice';
-import dashboardSummaryReducer from './slices/dashboardSummarySlice';
-import testsListReducer from './slices/testsListSlice';
-import testDetailsReducer from './slices/testDetailsSlice';
-import rootCauseAnalysisReducer from './slices/rootCauseAnalysisSlice';
-import userReducer from './slices/userSlice';
-import filtersReducer from './slices/filtersSlice';
+import { configureStore } from "@reduxjs/toolkit";
+import testsReducer from "./slices/testsSlice";
+import usersReducer from "./slices/usersSlice";
+import toastReducer from "./slices/toastSlice";
+import dashboardSummaryReducer from "./slices/dashboardSummarySlice";
+import testsListReducer from "./slices/testsListSlice";
+import testDetailsReducer from "./slices/testDetailsSlice";
+import rootCauseAnalysisReducer from "./slices/rootCauseAnalysisSlice";
+import userReducer from "./slices/userSlice";
+import filtersReducer from "./slices/filtersSlice";
 
 export const store = configureStore({
   reducer: {

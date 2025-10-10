@@ -16,6 +16,7 @@ const TestDetailPage: React.FC = () => {
   const testLogs = useSelector((state: RootState) => state.testDetails.logs);
   const rootCauseAnalysis = useSelector((state: RootState) => state.rootCauseAnalysis.data);
   const loading = useSelector((state: RootState) => state.testDetails.loading);
+  const logsLoading = useSelector((state: RootState) => state.testDetails.logsLoading);
   const error = useSelector((state: RootState) => state.testDetails.error);
 
   const [activeTab, setActiveTab] = useState('overview');
@@ -86,7 +87,7 @@ const TestDetailPage: React.FC = () => {
             </DetailsPanel>
           )}
           {activeTab === 'logs' && testLogs && (
-            <LogsViewer logs={testLogs.logs} />
+            <LogsViewer logs={testLogs.logs} testId={test_id} hasMore={testLogs.has_more} loading={logsLoading} />
           )}
            {activeTab === 'root_cause' && (
              <DetailsPanel title="Root Cause Analysis">

@@ -1,5 +1,5 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
 
 interface TestDetails {
   id: string;
@@ -14,6 +14,7 @@ interface TestDetails {
 interface TestLogs {
   test_id: string;
   logs: string[];
+  has_more: boolean;
 }
 
 interface TestDetailsState {
@@ -35,31 +36,35 @@ const initialState: TestDetailsState = {
 };
 
 export const fetchTestDetails = createAsyncThunk(
-  'testDetails/fetchTestDetails',
+  "testDetails/fetchTestDetails",
   async (testId: string, { rejectWithValue }) => {
     try {
       const response = await axios.get(`/tests/${testId}`);
       return response.data;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data || 'Failed to fetch test details');
+      return rejectWithValue(
+        error.response?.data || "Failed to fetch test details",
+      );
     }
-  }
+  },
 );
 
 export const fetchTestLogs = createAsyncThunk(
-  'testDetails/fetchTestLogs',
-  async (testId: string, { rejectWithValue }) => {
+  "testDetails/fetchTestLogs",
+  async ({ testId, skip = 0 }: { testId: string; skip?: number }, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`/tests/${testId}/logs`);
+      const response = await axios.get(`/tests/${testId}/logs`, { params: { skip, limit: 50 } });
       return response.data;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data || 'Failed to fetch test logs');
+      return rejectWithValue(
+        error.response?.data || "Failed to fetch test logs",
+      );
     }
-  }
+  },
 );
 
 const testDetailsSlice = createSlice({
-  name: 'testDetails',
+  name: "testDetails",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
@@ -82,7 +87,12 @@ const testDetailsSlice = createSlice({
       })
       .addCase(fetchTestLogs.fulfilled, (state, action) => {
         state.logsLoading = false;
-        state.logs = action.payload;
+        if (state.logs) {
+          state.logs.logs = [...state.logs.logs, ...action.payload.logs];
+          state.logs.has_more = action.payload.has_more;
+        } else {
+          state.logs = action.payload;
+        }
       })
       .addCase(fetchTestLogs.rejected, (state, action) => {
         state.logsLoading = false;

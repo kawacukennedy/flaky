@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 interface DetailsPanelProps {
   summaryContent: React.ReactNode;
@@ -11,12 +11,12 @@ const DetailsPanel: React.FC<DetailsPanelProps> = ({
   rootCausesContent,
   linkedIssuesContent,
 }) => {
-  const [activeTab, setActiveTab] = useState('Summary');
+  const [activeTab, setActiveTab] = useState("Summary");
 
   const tabs = [
-    { name: 'Summary', content: summaryContent },
-    { name: 'Root Causes', content: rootCausesContent },
-    { name: 'Linked Issues', content: linkedIssuesContent },
+    { name: "Summary", content: summaryContent },
+    { name: "Root Causes", content: rootCausesContent },
+    { name: "Linked Issues", content: linkedIssuesContent },
   ];
 
   return (
@@ -27,10 +27,11 @@ const DetailsPanel: React.FC<DetailsPanelProps> = ({
             <button
               key={tab.name}
               onClick={() => setActiveTab(tab.name)}
-              className={`whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm ${activeTab === tab.name
-                ? 'border-primary text-primary'
-                : 'border-transparent text-muted hover:text-text_light hover:border-gray-300 dark:hover:border-gray-700'
-                }`}
+              className={`whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm ${
+                activeTab === tab.name
+                  ? "border-primary text-primary"
+                  : "border-transparent text-muted hover:text-text_light hover:border-gray-300 dark:hover:border-gray-700"
+              }`}
             >
               {tab.name}
             </button>
@@ -42,9 +43,10 @@ const DetailsPanel: React.FC<DetailsPanelProps> = ({
           <div
             key={tab.name}
             className={`transition-all duration-200 ease-soft transform
-              ${activeTab === tab.name
-                ? 'opacity-100 translate-x-0'
-                : 'opacity-0 absolute top-0 left-0 w-full pointer-events-none translate-x-4'
+              ${
+                activeTab === tab.name
+                  ? "opacity-100 translate-x-0"
+                  : "opacity-0 absolute top-0 left-0 w-full pointer-events-none translate-x-4"
               }`}
           >
             {activeTab === tab.name && tab.content}

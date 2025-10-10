@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Github, Slack, Code } from 'lucide-react';
+import React, { useState } from "react";
+import { Github, Slack, Code } from "lucide-react";
 
 interface PreferencesProps {}
 
@@ -10,7 +10,9 @@ const Preferences: React.FC<PreferencesProps> = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h4 className="text-lg font-medium text-text_light dark:text-text_dark mb-2">General</h4>
+        <h4 className="text-lg font-medium text-text_light dark:text-text_dark mb-2">
+          General
+        </h4>
         <div className="flex items-center justify-between">
           <span className="text-text_light dark:text-text_dark">Dark Mode</span>
           <label className="relative inline-flex items-center cursor-pointer">
@@ -25,7 +27,9 @@ const Preferences: React.FC<PreferencesProps> = () => {
           </label>
         </div>
         <div className="flex items-center justify-between mt-2">
-          <span className="text-text_light dark:text-text_dark">Notifications</span>
+          <span className="text-text_light dark:text-text_dark">
+            Notifications
+          </span>
           <label className="relative inline-flex items-center cursor-pointer">
             <input
               type="checkbox"
@@ -40,28 +44,40 @@ const Preferences: React.FC<PreferencesProps> = () => {
       </div>
 
       <div>
-        <h4 className="text-lg font-medium text-text_light dark:text-text_dark mb-2">Integrations</h4>
+        <h4 className="text-lg font-medium text-text_light dark:text-text_dark mb-2">
+          Integrations
+        </h4>
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <Github className="h-5 w-5 mr-2 text-muted" />
-              <span className="text-text_light dark:text-text_dark">GitHub</span>
+              <span className="text-text_light dark:text-text_dark">
+                GitHub
+              </span>
             </div>
-            <button className="text-primary hover:underline text-sm">Connect</button>
+            <button className="text-primary hover:underline text-sm">
+              Connect
+            </button>
           </div>
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <Slack className="h-5 w-5 mr-2 text-muted" />
               <span className="text-text_light dark:text-text_dark">Slack</span>
             </div>
-            <button className="text-primary hover:underline text-sm">Connect</button>
+            <button className="text-primary hover:underline text-sm">
+              Connect
+            </button>
           </div>
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <Code className="h-5 w-5 mr-2 text-muted" />
-              <span className="text-text_light dark:text-text_dark">VS Code</span>
+              <span className="text-text_light dark:text-text_dark">
+                VS Code
+              </span>
             </div>
-            <button className="text-primary hover:underline text-sm">Connect</button>
+            <button className="text-primary hover:underline text-sm">
+              Connect
+            </button>
           </div>
         </div>
       </div>

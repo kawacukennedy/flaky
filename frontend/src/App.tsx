@@ -1,16 +1,16 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import DashboardPage from './pages/DashboardPage';
-import FlakesPage from './pages/FlakesPage';
-import ProfilePage from './pages/ProfilePage';
-import SettingsPage from './pages/SettingsPage';
-import TestDetailPage from './pages/TestDetailPage';
-import LoginPage from './pages/LoginPage';
-import SignupPage from './pages/SignupPage';
-import SearchPage from './pages/SearchPage';
-import { ThemeProvider } from './ThemeInitializer';
-import GlobalToast from './components/layout/GlobalToast';
-import LeftNav from './components/layout/LeftNav';
-import TopNav from './components/layout/TopNav';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import DashboardPage from "./pages/DashboardPage";
+import FlakesPage from "./pages/FlakesPage";
+import ProfilePage from "./pages/ProfilePage";
+import SettingsPage from "./pages/SettingsPage";
+import TestDetailPage from "./pages/TestDetailPage";
+import LoginPage from "./pages/LoginPage";
+import SignupPage from "./pages/SignupPage";
+import SearchPage from "./pages/SearchPage";
+import { ThemeProvider } from "./ThemeInitializer";
+import GlobalToast from "./components/layout/GlobalToast";
+import LeftNav from "./components/layout/LeftNav";
+import TopNav from "./components/layout/TopNav";
 
 function App() {
   return (

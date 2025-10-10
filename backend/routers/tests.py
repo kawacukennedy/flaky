@@ -52,18 +52,18 @@ def read_test(test_id: str, db: Session = Depends(get_db)):
     return test
 
 @router.get("/{test_id}/logs")
-def get_test_logs(test_id: str, db: Session = Depends(get_db)):
+def get_test_logs(test_id: str, skip: int = 0, limit: int = 50, db: Session = Depends(get_db)):
     # In a real scenario, logs would be stored in a dedicated logging system or as part of FlakyOccurrence
     # For now, we'll return dummy logs associated with flaky occurrences
-    occurrences = db.query(models.FlakyOccurrence).filter(models.FlakyOccurrence.test_id == test_id).all()
+    occurrences = db.query(models.FlakyOccurrence).filter(models.FlakyOccurrence.test_id == test_id).offset(skip).limit(limit).all()
     logs = []
     for occ in occurrences:
         logs.append(f"[{occ.timestamp.isoformat()}] Failure Reason: {occ.failure_reason or 'N/A'}")
-    
-    if not logs:
+
+    if not logs and skip == 0:
         logs = ["No logs available"]
-    
-    return {"test_id": test_id, "logs": logs}
+
+    return {"test_id": test_id, "logs": logs, "has_more": len(occurrences) == limit}
 
 @router.put("/{test_id}", response_model=schemas.TestResponse)
 async def update_test(test_id: str, test_update: schemas.TestCreate, db: Session = Depends(get_db)):

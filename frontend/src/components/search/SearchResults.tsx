@@ -1,5 +1,5 @@
-import React from 'react';
-import { Frown } from 'lucide-react';
+import React from "react";
+import { Frown } from "lucide-react";
 
 interface SearchResultItem {
   id: string;
@@ -14,7 +14,11 @@ interface EmptyStateCardProps {
   onCtaClick?: () => void;
 }
 
-const EmptyStateCard: React.FC<EmptyStateCardProps> = ({ message, ctaText, onCtaClick }) => {
+const EmptyStateCard: React.FC<EmptyStateCardProps> = ({
+  message,
+  ctaText,
+  onCtaClick,
+}) => {
   return (
     <div className="flex flex-col items-center justify-center p-8 bg-surface_light dark:bg-surface_dark rounded-md shadow-sm text-muted">
       <Frown className="h-16 w-16 mb-4" />
@@ -46,7 +50,10 @@ interface SearchResultsProps {
   isLoading: boolean;
 }
 
-const SearchResults: React.FC<SearchResultsProps> = ({ results, isLoading }) => {
+const SearchResults: React.FC<SearchResultsProps> = ({
+  results,
+  isLoading,
+}) => {
   if (isLoading) {
     return (
       <div className="space-y-4">
@@ -68,7 +75,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({ results, isLoading }) => 
       <EmptyStateCard
         message="No results found for your search."
         ctaText="Clear Filters"
-        onCtaClick={() => console.log('Clear filters action')}
+        onCtaClick={() => console.log("Clear filters action")}
       />
     );
   }
@@ -81,7 +88,9 @@ const SearchResults: React.FC<SearchResultsProps> = ({ results, isLoading }) => 
           href={item.link}
           className="block p-4 rounded-md shadow-sm bg-surface_light dark:bg-surface_dark hover:lift hover:shadow-md transition-all duration-normal"
         >
-          <h3 className="text-lg font-semibold text-text_light dark:text-text_dark mb-1">{item.title}</h3>
+          <h3 className="text-lg font-semibold text-text_light dark:text-text_dark mb-1">
+            {item.title}
+          </h3>
           <p className="text-muted text-sm">{item.description}</p>
         </a>
       ))}

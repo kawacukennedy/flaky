@@ -1,6 +1,6 @@
-import React, { Fragment } from 'react';
-import { Dialog, Transition } from '@headlessui/react';
-import { X } from 'lucide-react';
+import React, { Fragment } from "react";
+import { Dialog, Transition } from "@headlessui/react";
+import { X } from "lucide-react";
 
 interface ModalProps {
   isOpen: boolean;
@@ -43,9 +43,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
                 >
                   {title}
                 </Dialog.Title>
-                <div className="mt-2">
-                  {children}
-                </div>
+                <div className="mt-2">{children}</div>
 
                 <button
                   type="button"

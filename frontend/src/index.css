@@ -7,14 +7,20 @@ html.dark {
 }
 
 body {
-  font-family: theme('fontFamily.sans');
-  line-height: theme('lineHeight.normal');
+  font-family: theme("fontFamily.sans");
+  line-height: theme("lineHeight.normal");
 }
 
 @keyframes gradient-shift {
-  0% { background-position: 0% 0%; }
-  50% { background-position: 100% 100%; }
-  100% { background-position: 0% 0%; }
+  0% {
+    background-position: 0% 0%;
+  }
+  50% {
+    background-position: 100% 100%;
+  }
+  100% {
+    background-position: 0% 0%;
+  }
 }
 
 .animate-gradient-shift {
@@ -35,24 +41,47 @@ body {
 }
 
 @keyframes move-particles {
-  0% { background-position: 0 0; }
-  100% { background-position: 200px 200px; }
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 200px 200px;
+  }
 }
 
 @keyframes animate-ripple {
-  from { transform: translate(-50%, -50%) scale(0); opacity: 1; }
-  to { transform: translate(-50%, -50%) scale(1); opacity: 0; }
+  from {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 1;
+  }
+  to {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0;
+  }
 }
 
 @keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  20%, 60% { transform: translateX(-2px); }
-  40%, 80% { transform: translateX(2px); }
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20%,
+  60% {
+    transform: translateX(-2px);
+  }
+  40%,
+  80% {
+    transform: translateX(2px);
+  }
 }
 
 @keyframes glow {
-  0% { box-shadow: 0 0 0px 0px theme('colors.primary'); }
-  100% { box-shadow: 0 0 0px 3px theme('colors.primary'); }
+  0% {
+    box-shadow: 0 0 0px 0px theme("colors.primary");
+  }
+  100% {
+    box-shadow: 0 0 0px 3px theme("colors.primary");
+  }
 }
 
 .animate-glow {
@@ -60,6 +89,12 @@ body {
 }
 
 @keyframes fade-slide-in {
-  from { opacity: 0; transform: translateX(20px); }
-  to { opacity: 1; transform: translateX(0); }
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }

@@ -1,13 +1,8 @@
 // Purpose: Show flaky distribution
 
-import React from 'react';
-import { Pie } from 'react-chartjs-2';
-import {
-  Chart as ChartJS,
-  ArcElement,
-  Tooltip,
-  Legend,
-} from 'chart.js';
+import React from "react";
+import { Pie } from "react-chartjs-2";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -30,11 +25,11 @@ const PieChartComponent: React.FC<PieChartProps> = ({ data, options }) => {
     responsive: true,
     plugins: {
       legend: {
-        position: 'top' as const,
+        position: "top" as const,
       },
       title: {
         display: true,
-        text: 'Flaky Distribution',
+        text: "Flaky Distribution",
       },
     },
   };

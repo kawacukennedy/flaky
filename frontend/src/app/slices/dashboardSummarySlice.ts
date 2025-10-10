@@ -1,5 +1,5 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
 
 interface DashboardSummary {
   totalTests: number;
@@ -21,19 +21,19 @@ const initialState: DashboardSummaryState = {
 };
 
 export const fetchDashboardSummary = createAsyncThunk(
-  'dashboardSummary/fetchDashboardSummary',
+  "dashboardSummary/fetchDashboardSummary",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get('/tests/summary'); // Adjust endpoint
+      const response = await axios.get("/tests/summary"); // Adjust endpoint
       return response.data;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data || 'Failed to fetch summary');
+      return rejectWithValue(error.response?.data || "Failed to fetch summary");
     }
-  }
+  },
 );
 
 const dashboardSummarySlice = createSlice({
-  name: 'dashboardSummary',
+  name: "dashboardSummary",
   initialState,
   reducers: {},
   extraReducers: (builder) => {

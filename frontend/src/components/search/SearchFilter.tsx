@@ -1,5 +1,5 @@
-import React from 'react';
-import { ChevronDown } from 'lucide-react';
+import React from "react";
+import { ChevronDown } from "lucide-react";
 
 interface SearchFilterProps {
   label: string;
@@ -28,7 +28,10 @@ const SearchFilter: React.FC<SearchFilterProps> = ({
           </option>
         ))}
       </select>
-      <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 text-muted pointer-events-none" size={16} />
+      <ChevronDown
+        className="absolute right-2 top-1/2 -translate-y-1/2 text-muted pointer-events-none"
+        size={16}
+      />
     </div>
   );
 };

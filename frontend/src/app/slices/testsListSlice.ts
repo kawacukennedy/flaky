@@ -1,5 +1,5 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
 
 interface Test {
   id: string;
@@ -25,40 +25,45 @@ const initialState: TestsListState = {
   error: null,
   data: [],
   selectedTestId: null,
-  query: '',
+  query: "",
   appliedFilters: {},
 };
 
 export const fetchFilteredTests = createAsyncThunk(
-  'testsList/fetchFilteredTests',
-  async ({ query, filters }: { query: string; filters: any }, { rejectWithValue }) => {
+  "testsList/fetchFilteredTests",
+  async (
+    { query, filters }: { query: string; filters: any },
+    { rejectWithValue },
+  ) => {
     try {
-      const response = await axios.get('/tests', { params: { query, ...filters } });
+      const response = await axios.get("/tests", {
+        params: { query, ...filters },
+      });
       return response.data;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data || 'Failed to fetch tests');
+      return rejectWithValue(error.response?.data || "Failed to fetch tests");
     }
-  }
+  },
 );
 
 export const applyFilters = createAsyncThunk(
-  'testsList/applyFilters',
+  "testsList/applyFilters",
   async (filters: any, { rejectWithValue }) => {
     // Update filters and refetch
     return filters;
-  }
+  },
 );
 
 export const sortTests = createAsyncThunk(
-  'testsList/sortTests',
+  "testsList/sortTests",
   async (sortBy: string, { rejectWithValue }) => {
     // Sort logic
     return sortBy;
-  }
+  },
 );
 
 const testsListSlice = createSlice({
-  name: 'testsList',
+  name: "testsList",
   initialState,
   reducers: {
     setSelectedTestId: (state, action) => {

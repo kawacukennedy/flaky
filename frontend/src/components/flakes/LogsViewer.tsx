@@ -1,15 +1,20 @@
-import React, { useState } from 'react';
-import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
-import { Copy, ChevronDown, ChevronRight } from 'lucide-react';
+import React, { useState } from "react";
+import { Light as SyntaxHighlighter } from "react-syntax-highlighter";
+import { docco } from "react-syntax-highlighter/dist/esm/styles/hljs";
+import { Copy, ChevronDown, ChevronRight } from "lucide-react";
 
 interface LogsViewerProps {
   logContent: string;
   language?: string;
 }
 
-const LogsViewer: React.FC<LogsViewerProps> = ({ logContent, language = 'plaintext' }) => {
-  const [expandedStacktraces, setExpandedStacktraces] = useState<Set<number>>(new Set());
+const LogsViewer: React.FC<LogsViewerProps> = ({
+  logContent,
+  language = "plaintext",
+}) => {
+  const [expandedStacktraces, setExpandedStacktraces] = useState<Set<number>>(
+    new Set(),
+  );
 
   const toggleStacktrace = (lineNumber: number) => {
     setExpandedStacktraces((prev) => {
@@ -29,8 +34,9 @@ const LogsViewer: React.FC<LogsViewerProps> = ({ logContent, language = 'plainte
   };
 
   const renderLine = (node: any, lineNumber: number) => {
-    const line = node.children[0]?.value || '';
-    const isStacktraceStart = line.includes('at ') || line.includes('Caused by:'); // Simple heuristic
+    const line = node.children[0]?.value || "";
+    const isStacktraceStart =
+      line.includes("at ") || line.includes("Caused by:"); // Simple heuristic
     const isExpanded = expandedStacktraces.has(lineNumber);
 
     if (isStacktraceStart) {
@@ -42,9 +48,16 @@ const LogsViewer: React.FC<LogsViewerProps> = ({ logContent, language = 'plainte
             aria-expanded={isExpanded}
             aria-controls={`stacktrace-line-${lineNumber}`}
           >
-            {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+            {isExpanded ? (
+              <ChevronDown size={16} />
+            ) : (
+              <ChevronRight size={16} />
+            )}
           </button>
-          <span id={`stacktrace-line-${lineNumber}`} className={isExpanded ? '' : 'truncate'}>
+          <span
+            id={`stacktrace-line-${lineNumber}`}
+            className={isExpanded ? "" : "truncate"}
+          >
             {line}
           </span>
         </div>
@@ -68,14 +81,16 @@ const LogsViewer: React.FC<LogsViewerProps> = ({ logContent, language = 'plainte
         showLineNumbers={true}
         wrapLines={true}
         lineProps={(lineNumber) => ({
-          style: { display: 'block', cursor: 'pointer' },
+          style: { display: "block", cursor: "pointer" },
           onClick: () => toggleStacktrace(lineNumber),
         })}
         renderer={({ rows }) => (
           <code className="hljs">
             {rows.map((row, i) => (
               <div key={i} className="flex">
-                <span className="line-number pr-4 text-gray-500 select-none">{i + 1}</span>
+                <span className="line-number pr-4 text-gray-500 select-none">
+                  {i + 1}
+                </span>
                 <span className="line-content flex-1">
                   {renderLine(row, i + 1)}
                 </span>

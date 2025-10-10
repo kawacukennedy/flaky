@@ -1,5 +1,5 @@
-import React from 'react';
-import { Inbox } from 'lucide-react';
+import React from "react";
+import { Inbox } from "lucide-react";
 
 interface RecentFlakesProps {
   flakes?: { id: string; name: string; timestamp: string }[];
@@ -10,11 +10,16 @@ const RecentFlakes: React.FC<RecentFlakesProps> = ({ flakes }) => {
 
   return (
     <div className="bg-surface_light dark:bg-surface_dark rounded-lg p-6 shadow-sm">
-      <h3 className="text-lg font-semibold text-text_light dark:text-text_dark mb-4">Recent Flakes</h3>
+      <h3 className="text-lg font-semibold text-text_light dark:text-text_dark mb-4">
+        Recent Flakes
+      </h3>
       {displayFlakes && displayFlakes.length > 0 ? (
         <ul className="space-y-3">
           {displayFlakes.map((flake) => (
-            <li key={flake.id} className="flex items-center justify-between text-text_light dark:text-text_dark">
+            <li
+              key={flake.id}
+              className="flex items-center justify-between text-text_light dark:text-text_dark"
+            >
               <span className="truncate">{flake.name}</span>
               <span className="text-sm text-muted">{flake.timestamp}</span>
             </li>

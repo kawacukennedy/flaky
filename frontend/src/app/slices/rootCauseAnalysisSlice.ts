@@ -1,5 +1,5 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
 
 interface RootCause {
   type: string;
@@ -21,19 +21,21 @@ const initialState: RootCauseAnalysisState = {
 };
 
 export const fetchRootCause = createAsyncThunk(
-  'rootCauseAnalysis/fetchRootCause',
+  "rootCauseAnalysis/fetchRootCause",
   async (testId: string, { rejectWithValue }) => {
     try {
       const response = await axios.get(`/analysis/root_cause/${testId}`);
       return response.data.root_causes;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data || 'Failed to fetch root cause');
+      return rejectWithValue(
+        error.response?.data || "Failed to fetch root cause",
+      );
     }
-  }
+  },
 );
 
 const rootCauseAnalysisSlice = createSlice({
-  name: 'rootCauseAnalysis',
+  name: "rootCauseAnalysis",
   initialState,
   reducers: {},
   extraReducers: (builder) => {

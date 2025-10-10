@@ -1,6 +1,6 @@
-import { useEffect, useRef } from 'react';
-import { useDispatch } from 'react-redux';
-import { AppDispatch } from '../app/store';
+import { useEffect, useRef } from "react";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../app/store";
 
 interface WebSocketHookOptions {
   onMessage: (event: MessageEvent) => void;
@@ -17,7 +17,7 @@ const useWebSocket = (url: string, options: WebSocketHookOptions) => {
     ws.current = new WebSocket(url);
 
     ws.current.onopen = (event) => {
-      console.log('WebSocket connected', event);
+      console.log("WebSocket connected", event);
       options.onOpen && options.onOpen(event);
     };
 
@@ -26,13 +26,13 @@ const useWebSocket = (url: string, options: WebSocketHookOptions) => {
     };
 
     ws.current.onclose = (event) => {
-      console.log('WebSocket disconnected', event);
+      console.log("WebSocket disconnected", event);
       options.onClose && options.onClose(event);
       // Optional: Reconnect logic
     };
 
     ws.current.onerror = (event) => {
-      console.error('WebSocket error', event);
+      console.error("WebSocket error", event);
       options.onError && options.onError(event);
     };
 

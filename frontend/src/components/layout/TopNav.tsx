@@ -1,8 +1,8 @@
-import React, { useRef, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { AppDispatch, RootState } from '../../app/store';
-import { logout } from '../../app/slices/userSlice';
+import React, { useRef, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { AppDispatch, RootState } from "../../app/store";
+import { logout } from "../../app/slices/userSlice";
 
 interface TopNavProps {
   onSearch: (query: string) => void;
@@ -20,26 +20,30 @@ const TopNav: React.FC<TopNavProps> = ({ onSearch }) => {
 
   const handleLogout = () => {
     dispatch(logout());
-    navigate('/login');
+    navigate("/login");
   };
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === '/') {
+      if (event.key === "/") {
         event.preventDefault();
         searchInputRef.current?.focus();
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown);
 
     return () => {
-      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
 
   return (
-    <header data-testid="topnav" role="banner" className="bg-white shadow-sm p-4 flex items-center justify-between h-16">
+    <header
+      data-testid="topnav"
+      role="banner"
+      className="bg-white shadow-sm p-4 flex items-center justify-between h-16"
+    >
       <div className="flex items-center">
         <h1 className="text-xl font-bold text-text_primary">FlakeHunter</h1>
       </div>
@@ -53,15 +57,34 @@ const TopNav: React.FC<TopNavProps> = ({ onSearch }) => {
           aria-label="Search flaky tests, logs, or errors"
         />
       </div>
-      <nav role="navigation" aria-label="Account menu" className="flex items-center space-x-4">
+      <nav
+        role="navigation"
+        aria-label="Account menu"
+        className="flex items-center space-x-4"
+      >
         {user ? (
           <>
             <span className="text-text_primary">{user.username}</span>
-            <button onClick={() => navigate('/profile')} className="text-primary hover:underline">Profile</button>
-            <button onClick={handleLogout} className="text-error hover:underline">Logout</button>
+            <button
+              onClick={() => navigate("/profile")}
+              className="text-primary hover:underline"
+            >
+              Profile
+            </button>
+            <button
+              onClick={handleLogout}
+              className="text-error hover:underline"
+            >
+              Logout
+            </button>
           </>
         ) : (
-          <button onClick={() => navigate('/login')} className="text-primary hover:underline">Login</button>
+          <button
+            onClick={() => navigate("/login")}
+            className="text-primary hover:underline"
+          >
+            Login
+          </button>
         )}
       </nav>
     </header>

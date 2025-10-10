@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 interface FiltersState {
   query: string;
@@ -6,12 +6,12 @@ interface FiltersState {
 }
 
 const initialState: FiltersState = {
-  query: '',
+  query: "",
   appliedFilters: {},
 };
 
 const filtersSlice = createSlice({
-  name: 'filters',
+  name: "filters",
   initialState,
   reducers: {
     setQuery: (state, action) => {

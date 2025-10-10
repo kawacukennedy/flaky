@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '../../app/store';
-import { clearToast } from '../../app/slices/toastSlice';
+import React, { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "../../app/store";
+import { clearToast } from "../../app/slices/toastSlice";
 
 const GlobalToast: React.FC = () => {
   const dispatch = useDispatch();
@@ -18,22 +18,22 @@ const GlobalToast: React.FC = () => {
 
   if (!message) return null;
 
-  let bgColorClass = 'bg-info';
-  let textColorClass = 'text-white';
+  let bgColorClass = "bg-info";
+  let textColorClass = "text-white";
 
   switch (type) {
-    case 'success':
-      bgColorClass = 'bg-success';
+    case "success":
+      bgColorClass = "bg-success";
       break;
-    case 'error':
-      bgColorClass = 'bg-danger';
+    case "error":
+      bgColorClass = "bg-danger";
       break;
-    case 'warning':
-      bgColorClass = 'bg-warning';
+    case "warning":
+      bgColorClass = "bg-warning";
       break;
-    case 'info':
+    case "info":
     default:
-      bgColorClass = 'bg-info';
+      bgColorClass = "bg-info";
       break;
   }
 
