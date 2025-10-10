@@ -4,40 +4,40 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../app/store';
-import { fetchTestDetails, fetchTestLogs, fetchRootCauseAnalysis } from '../app/slices/testsSlice';
+import { fetchTestDetails, fetchTestLogs } from '../app/slices/testDetailsSlice';
+import { fetchRootCause } from '../app/slices/rootCauseAnalysisSlice';
 import DetailsPanel from '../components/DetailsPanel';
 import LogsViewer from '../components/LogsViewer';
 
 const TestDetailPage: React.FC = () => {
   const { test_id } = useParams<{ test_id: string }>();
   const dispatch = useDispatch<AppDispatch>();
-  const testDetails = useSelector((state: RootState) => state.tests.selectedTestDetails);
-  const testLogs = useSelector((state: RootState) => state.tests.selectedTestLogs);
-  const rootCauseAnalysis = useSelector((state: RootState) => state.tests.selectedRootCauseAnalysis);
-  const status = useSelector((state: RootState) => state.tests.status);
-  const error = useSelector((state: RootState) => state.tests.error);
+  const testDetails = useSelector((state: RootState) => state.testDetails.data);
+  const testLogs = useSelector((state: RootState) => state.testDetails.logs);
+  const rootCauseAnalysis = useSelector((state: RootState) => state.rootCauseAnalysis.data);
+  const loading = useSelector((state: RootState) => state.testDetails.loading);
+  const error = useSelector((state: RootState) => state.testDetails.error);
 
   const [activeTab, setActiveTab] = useState('overview');
 
   useEffect(() => {
     if (test_id) {
-      dispatch(fetchTestDetails(parseInt(test_id)));
+      dispatch(fetchTestDetails(test_id));
     }
   }, [dispatch, test_id]);
 
   const handleTabClick = (tab: string) => {
     setActiveTab(tab);
     if (test_id) {
-      const id = parseInt(test_id);
       if (tab === 'logs' && !testLogs) {
-        dispatch(fetchTestLogs(id));
-      } else if (tab === 'root_cause' && !rootCauseAnalysis) {
-        dispatch(fetchRootCauseAnalysis(id));
+        dispatch(fetchTestLogs(test_id));
+      } else if (tab === 'root_cause' && rootCauseAnalysis.length === 0) {
+        dispatch(fetchRootCause(test_id));
       }
     }
   };
 
-  if (status === 'loading' && !testDetails) {
+  if (loading && !testDetails) {
     return <div className="container mx-auto p-4">Loading test details...</div>;
   }
 
@@ -88,19 +88,21 @@ const TestDetailPage: React.FC = () => {
           {activeTab === 'logs' && testLogs && (
             <LogsViewer logs={testLogs.logs} />
           )}
-          {activeTab === 'root_cause' && rootCauseAnalysis && (
-            <DetailsPanel title="Root Cause Analysis">
-              {rootCauseAnalysis.root_causes.length > 0 ? (
-                <ul>
-                  {rootCauseAnalysis.root_causes.map((cause: any, index: number) => (
-                    <li key={index}>{cause}</li> // Assuming root_causes is an array of strings
-                  ))}
-                </ul>
-              ) : (
-                <p>No root cause analysis available.</p>
-              )}
-            </DetailsPanel>
-          )}
+           {activeTab === 'root_cause' && (
+             <DetailsPanel title="Root Cause Analysis">
+               {rootCauseAnalysis.length > 0 ? (
+                 <ul>
+                   {rootCauseAnalysis.map((cause: any, index: number) => (
+                     <li key={index}>
+                       <strong>{cause.type}</strong>: {cause.description} (Severity: {cause.severity}, Confidence: {cause.confidence})
+                     </li>
+                   ))}
+                 </ul>
+               ) : (
+                 <p>No root cause analysis available.</p>
+               )}
+             </DetailsPanel>
+           )}
         </div>
       </div>
     </div>

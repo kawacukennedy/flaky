@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../app/store';
 
 const ProfilePage: React.FC = () => {
-  const user = useSelector((state: RootState) => state.users.user);
+  const user = useSelector((state: RootState) => state.user.data);
 
   if (!user) {
     return <div className="container mx-auto p-4">Please log in to view your profile.</div>;
@@ -24,8 +24,8 @@ const ProfilePage: React.FC = () => {
           <p className="text-gray-900 text-lg">{user.email}</p>
         </div>
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">Admin Status:</label>
-          <p className="text-gray-900 text-lg">{user.is_admin ? 'Yes' : 'No'}</p>
+          <label className="block text-gray-700 text-sm font-bold mb-2">Role:</label>
+          <p className="text-gray-900 text-lg">{user.role}</p>
         </div>
         {/* Add more profile details or an edit form here */}
       </div>
