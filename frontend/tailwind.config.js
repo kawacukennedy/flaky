@@ -4,6 +4,7 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  darkMode: 'class',
   theme: {
     extend: {
       spacing: {
@@ -41,12 +42,27 @@ export default {
         loose: '1.75',
       },
       colors: {
-        primary: '#4F46E5',
-        secondary: '#6366F1',
+        primary: {
+          DEFAULT: '#4F46E5',
+          dark: '#3730A3',
+        },
+        secondary: {
+          DEFAULT: '#6366F1',
+          dark: '#4F46E5',
+        },
         accent: '#FACC15',
-        background: '#F9FAFB',
-        text_primary: '#111827',
-        text_secondary: '#6B7280',
+        background: {
+          DEFAULT: '#F9FAFB',
+          dark: '#111827',
+        },
+        text_primary: {
+          DEFAULT: '#111827',
+          dark: '#F9FAFB',
+        },
+        text_secondary: {
+          DEFAULT: '#6B7280',
+          dark: '#9CA3AF',
+        },
         error: '#EF4444',
         success: '#10B981',
       },

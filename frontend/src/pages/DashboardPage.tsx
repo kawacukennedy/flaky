@@ -217,7 +217,7 @@ const DashboardPage: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-        <div className="bg-white p-4 rounded-2xl shadow-md">
+        <div className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-md">
           <h2 className="text-xl font-semibold mb-4">Test Trends</h2>
           <LineChartComponent data={lineChartData} />
         </div>
