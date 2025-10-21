@@ -194,54 +194,9 @@ const DashboardPage: React.FC = () => {
   }
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
-
-      <div className="flex flex-col md:flex-row gap-4 mb-6">
-        <SearchBar
-          searchTerm={filters.query}
-          onSearchChange={handleSearchChange}
-          placeholder="Search tests..."
-        />
-        <SearchFilter
-          filters={filters.appliedFilters}
-          onFilterChange={handleFilterChange}
-          options={filterOptions}
-        />
-        <button
-          onClick={handleClearFilters}
-          className="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300"
-        >
-          Reset Filters
-        </button>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-        <div className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-md">
-          <h2 className="text-xl font-semibold mb-4">Test Trends</h2>
-          <LineChartComponent data={lineChartData} />
-        </div>
-        <div className="bg-white p-4 rounded-2xl shadow-md">
-          <h2 className="text-xl font-semibold mb-4">Test Distribution</h2>
-          <PieChartComponent data={pieChartData} />
-        </div>
-        <div className="bg-white p-4 rounded-2xl shadow-md">
-          <h2 className="text-xl font-semibold mb-4">Tests by Environment</h2>
-          <PieChartComponent data={environmentChartData} />
-        </div>
-      </div>
-
-      <div className="bg-white p-4 rounded-2xl shadow-md">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold">All Tests</h2>
-          <Button onClick={handleExportCSV}>Export to CSV</Button>
-        </div>
-        <TableComponent
-          data={testsList.data}
-          columns={tableColumns}
-          onRowClick={handleTableRowClick}
-        />
-      </div>
+    <div>
+      <h1>Dashboard Page</h1>
+      <p>This is the dashboard.</p>
     </div>
   );
 };
