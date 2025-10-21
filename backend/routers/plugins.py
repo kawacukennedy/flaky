@@ -6,6 +6,8 @@ from ..database import SessionLocal
 from ..ml_scorer import FlakinessPredictor
 from ..root_cause_engine import RootCauseEngine
 from ..websockets import manager
+from ..services.plugin_service import PluginService
+from ..services.notification_service import NotificationService
 import asyncio
 import time
 from tenacity import retry, stop_after_attempt, wait_exponential
@@ -23,8 +25,13 @@ def get_db():
 async def ingest_plugin_data(
     payload: schemas.PluginTestPayload,
     db: Session = Depends(get_db)
-):
+ ):
     try:
+        # Validate payload using service
+        plugin_service = PluginService()
+        if not plugin_service.validate_payload(payload.dict()):
+            raise HTTPException(status_code=400, detail="Invalid payload structure")
+
         # 1. Validate payload
         if not payload.test_name or not payload.project_id:
             raise HTTPException(status_code=400, detail="Invalid payload: missing required fields")
@@ -103,6 +110,13 @@ async def ingest_plugin_data(
                 db.commit()
             except Exception as e:
                 print(f"Root cause analysis failed: {e}")
+
+        # Send notification if highly flaky
+        if flakiness_score > 0.8:
+            notification_service = NotificationService()
+            message = f"High flakiness detected: {test.name} in project {project.name} has score {flakiness_score}"
+            notification_service.send_slack_message("#alerts", message)
+            notification_service.send_email("admin@example.com", "Flaky Test Alert", message)
 
         # Broadcast update
         await manager.broadcast({
