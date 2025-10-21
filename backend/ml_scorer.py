@@ -9,25 +9,25 @@ class FlakinessPredictor:
     def __init__(self):
         self.model = RandomForestRegressor(n_estimators=100, random_state=42)
         self.cache = {}
-        # Placeholder for trained model, in real app load from file
+        # Train on dummy data for demonstration
+        self._train_dummy_model()
 
     def predict_flakiness(self, features: Dict[str, Any]) -> float:
         """
         Predict flakiness score based on features
         """
         try:
-            # Simple feature engineering
             X = pd.DataFrame([features])
-            # Assume features include: duration, num_failures, num_runs, etc.
-            # For now, use simple heuristic
+            prediction = self.model.predict(X)[0]
+            return min(max(prediction, 0.0), 1.0)
+        except Exception as e:
+            print(f"Error in predict_flakiness: {e}")
+            # Fallback to heuristic
             if 'num_failures' in features and 'num_runs' in features:
                 score = features['num_failures'] / features['num_runs'] if features['num_runs'] > 0 else 0
             else:
-                score = 0.5  # default
+                score = 0.5
             return min(max(score, 0.0), 1.0)
-        except Exception as e:
-            print(f"Error in predict_flakiness: {e}")
-            return 0.5  # fallback
 
     def update_model(self, new_data: pd.DataFrame):
         """
@@ -56,6 +56,19 @@ class FlakinessPredictor:
         expired_keys = [k for k, v in self.cache.items() if current_time - v['timestamp'] > ttl]
         for k in expired_keys:
             del self.cache[k]
+
+    def _train_dummy_model(self):
+        """Train the model on dummy data"""
+        # Dummy data for demonstration
+        dummy_data = pd.DataFrame({
+            'num_failures': np.random.randint(0, 10, 100),
+            'num_runs': np.random.randint(1, 20, 100),
+            'duration': np.random.uniform(0.1, 5.0, 100)
+        })
+        dummy_data['flakiness_score'] = dummy_data['num_failures'] / dummy_data['num_runs']
+        X = dummy_data.drop('flakiness_score', axis=1)
+        y = dummy_data['flakiness_score']
+        self.model.fit(X, y)
 
     def _get_cache_key(self, features: Dict[str, Any]) -> str:
         """Generate cache key from features"""
