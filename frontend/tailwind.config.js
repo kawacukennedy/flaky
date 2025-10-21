@@ -49,6 +49,12 @@ export default {
         text_secondary: '#6B7280',
         error: '#EF4444',
         success: '#10B981',
+        surface_light: '#FFFFFF',
+        surface_dark: '#1F2937',
+        text_light: '#111827',
+        text_dark: '#F9FAFB',
+        bg_light: '#F3F4F6',
+        bg_dark: '#374151',
       },
       borderRadius: {
         md: '0.375rem',
