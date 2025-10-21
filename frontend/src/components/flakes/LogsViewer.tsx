@@ -80,13 +80,13 @@ const LogsViewer: React.FC<LogsViewerProps> = ({
         style={docco}
         showLineNumbers={true}
         wrapLines={true}
-        lineProps={(lineNumber) => ({
+        lineProps={(lineNumber: number) => ({
           style: { display: "block", cursor: "pointer" },
           onClick: () => toggleStacktrace(lineNumber),
         })}
-        renderer={({ rows }) => (
+        renderer={({ rows }: { rows: any[] }) => (
           <code className="hljs">
-            {rows.map((row, i) => (
+            {rows.map((row: any, i: number) => (
               <div key={i} className="flex">
                 <span className="line-number pr-4 text-gray-500 select-none">
                   {i + 1}

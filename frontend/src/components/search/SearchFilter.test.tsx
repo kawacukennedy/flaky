@@ -48,7 +48,7 @@ describe("SearchFilter", () => {
   });
 
   it("displays the correct active option", () => {
-    render(<SearchFilter {...defaultProps} currentValue="GitHub" />);
+    render(<SearchFilter {...defaultProps} defaultValue="GitHub" />);
     fireEvent.click(screen.getByRole("button", { name: "Source: GitHub" })); // Open
     expect(screen.getByRole("menuitem", { name: "GitHub" })).toHaveClass(
       "bg-primary text-white",

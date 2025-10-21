@@ -216,18 +216,18 @@ const testsSlice = createSlice({
         state.error =
           action.error.message || "Failed to fetch root cause analysis";
       })
-      .addCase(createTest.fulfilled, (state, action) => {
+      .addCase(createTest.fulfilled, (_state, _action) => {
         // This is handled by WebSocket now, but keeping for direct API calls if any
         // state.tests.push(action.payload);
       })
-      .addCase(updateTest.fulfilled, (state, action) => {
+      .addCase(updateTest.fulfilled, (_state, _action) => {
         // This is handled by WebSocket now
         // const index = state.tests.findIndex(test => test.id === action.payload.id);
         // if (index !== -1) {
         //   state.tests[index] = action.payload;
         // }
       })
-      .addCase(deleteTest.fulfilled, (state, action) => {
+      .addCase(deleteTest.fulfilled, (_state, _action) => {
         // This is handled by WebSocket now
         // state.tests = state.tests.filter(test => test.id !== action.payload);
       });

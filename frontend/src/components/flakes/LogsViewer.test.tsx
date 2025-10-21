@@ -31,17 +31,17 @@ ValueError: Test error`;
   });
 
   it("renders the logs content", () => {
-    render(<LogsViewer logs={simpleLogs} />);
+    render(<LogsViewer logContent={simpleLogs} />);
     expect(screen.getByText(simpleLogs)).toBeInTheDocument();
   });
 
   it("renders the copy button", () => {
-    render(<LogsViewer logs={simpleLogs} />);
+    render(<LogsViewer logContent={simpleLogs} />);
     expect(screen.getByLabelText("Copy logs to clipboard")).toBeInTheDocument();
   });
 
   it("copies logs to clipboard when copy button is clicked", async () => {
-    render(<LogsViewer logs={simpleLogs} />);
+    render(<LogsViewer logContent={simpleLogs} />);
     fireEvent.click(screen.getByLabelText("Copy logs to clipboard"));
     expect(navigator.clipboard.writeText).toHaveBeenCalledWith(simpleLogs);
     await waitFor(() =>
@@ -50,21 +50,21 @@ ValueError: Test error`;
   });
 
   it("renders expand/collapse button for logs with stacktrace", () => {
-    render(<LogsViewer logs={mockLogs} />);
+    render(<LogsViewer logContent={mockLogs} />);
     expect(
       screen.getByRole("button", { name: "Expand Stacktrace" }),
     ).toBeInTheDocument();
   });
 
   it("does not render expand/collapse button for logs without stacktrace", () => {
-    render(<LogsViewer logs={simpleLogs} />);
+    render(<LogsViewer logContent={simpleLogs} />);
     expect(
       screen.queryByRole("button", { name: /Stacktrace/i }),
     ).not.toBeInTheDocument();
   });
 
   it("expands and collapses stacktrace", () => {
-    render(<LogsViewer logs={mockLogs} />);
+    render(<LogsViewer logContent={mockLogs} />);
     const expandButton = screen.getByRole("button", {
       name: "Expand Stacktrace",
     });

@@ -3,16 +3,6 @@ import "@testing-library/jest-dom";
 import SearchResults from "./SearchResults";
 
 describe("SearchResults", () => {
-  const mockResults = [
-    {
-      id: "1",
-      name: "Test 1",
-      status: "pass",
-      flakiness_score: 0.1,
-      timestamp: "2023-01-01",
-    },
-  ];
-
   it("renders loading state when loading is true", () => {
     render(<SearchResults results={[]} loading={true} />);
     expect(screen.getAllByTestId("loading-skeleton")).toHaveLength(3);

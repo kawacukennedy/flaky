@@ -46,7 +46,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onFilterChange, current
 
   return (
     <div
-      className={`flex flex-col md:flex-row items-center bg-surface_light dark:bg-surface_dark rounded-md shadow-sm p-2 border-2 ${isError ? "border-danger animate-shake" : isFocused ? "border-primary animate-glow" : "border-transparent"} transition-all duration-200`}
+      className={`flex flex-col md:flex-row items-center bg-surface_light dark:bg-surface_dark rounded-md shadow-sm p-2 border-2 ${isFocused ? "border-primary animate-glow" : "border-transparent"} transition-all duration-200`}
       style={{ height: "48px" }} // height_px: 48
     >
       <Search className="text-muted mx-2" size={20} />

@@ -48,7 +48,7 @@ export const fetchFilteredTests = createAsyncThunk(
 
 export const applyFilters = createAsyncThunk(
   "testsList/applyFilters",
-  async (filters: any, { rejectWithValue }) => {
+  async (filters: any) => {
     // Update filters and refetch
     return filters;
   },
@@ -56,7 +56,7 @@ export const applyFilters = createAsyncThunk(
 
 export const sortTests = createAsyncThunk(
   "testsList/sortTests",
-  async (sortBy: string, { rejectWithValue }) => {
+  async (sortBy: string) => {
     // Sort logic
     return sortBy;
   },

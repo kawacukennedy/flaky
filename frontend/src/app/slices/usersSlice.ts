@@ -82,8 +82,8 @@ const usersSlice = createSlice({
       .addCase(signupUser.pending, (state) => {
         state.status = "loading";
       })
-      .addCase(signupUser.fulfilled, (state, action) => {
-        state.status = "succeeded";
+      .addCase(signupUser.fulfilled, (_state, _action) => {
+        // state.status = "succeeded";
         // Optionally log in the user after signup, or just show success message
       })
       .addCase(signupUser.rejected, (state, action) => {
