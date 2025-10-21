@@ -3,6 +3,7 @@
 import pytest
 import requests
 import os
+import sys
 
 FLAKYHUNTER_API_URL = os.getenv("FLAKYHUNTER_API_URL", "http://localhost:8000")
 
@@ -17,7 +18,7 @@ def pytest_runtest_makereport(item, call):
             "test_name": test_name,
             "status": status,
             "duration": duration,
-            "environment": f"python-{os.sys.version.split()[0]}-{os.sys.platform}",
+            "environment": f"python-{sys.version.split()[0]}-{sys.platform}",
             "project_id": os.getenv("FLAKYHUNTER_PROJECT_ID", "default-project"),  # TODO: get from config
             "timestamp": datetime.utcnow().isoformat()
         }
