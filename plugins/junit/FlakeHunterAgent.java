@@ -27,14 +27,15 @@ public class FlakeHunterAgent {
         data.put("test_name", testName);
         data.put("status", status);
         data.put("duration", duration);
-        data.put("stack_trace", stackTrace);
-        data.put("env", Map.of("java_version", System.getProperty("java.version"), "os", System.getProperty("os.name")));
+        data.put("environment", "java-" + System.getProperty("java.version") + "-" + System.getProperty("os.name"));
+        data.put("project_id", System.getenv().getOrDefault("FLAKYHUNTER_PROJECT_ID", "default-project"));
+        data.put("timestamp", java.time.Instant.now().toString());
 
         String json = new org.json.JSONObject(data).toString();
 
         HttpRequest request = HttpRequest.newBuilder()
                 .POST(HttpRequest.BodyPublishers.ofString(json))
-                .uri(URI.create(FLAKYHUNTER_API_URL + "/tests"))
+                .uri(URI.create(FLAKYHUNTER_API_URL + "/plugins/tests"))
                 .setHeader("User-Agent", "Java FlakeHunter Agent")
                 .header("Content-Type", "application/json")
                 .build();

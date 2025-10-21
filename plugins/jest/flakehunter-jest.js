@@ -17,13 +17,12 @@ class FlakyHunterReporter {
           test_name: assertionResult.fullName,
           status: assertionResult.status === 'passed' ? 'pass' : 'fail',
           duration: assertionResult.duration,
-          env: {
-            node_version: process.version,
-            platform: process.platform,
-          },
+          environment: `node-${process.version}-${process.platform}`,
+          project_id: process.env.FLAKYHUNTER_PROJECT_ID || 'default-project',
+          timestamp: new Date().toISOString()
         };
 
-        axios.post(`${FLAKYHUNTER_API_URL}/tests`, payload)
+        axios.post(`${FLAKYHUNTER_API_URL}/plugins/tests`, payload)
           .then(response => {
             console.log(`[FlakyHunter] Sent test result for ${assertionResult.fullName}`);
           })
